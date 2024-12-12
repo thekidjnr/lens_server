@@ -8,12 +8,13 @@ export const createProject = async (
   next: NextFunction
 ) => {
   try {
-    const { name, description, creatorId, clientId } = req.body;
+    const decodedUser = req.user as UserPayload;
+    const { name, description, clientId } = req.body;
 
     const newProject = new Project({
       name,
       description,
-      creatorId,
+      creatorId: decodedUser.id,
       clientId,
     });
 
@@ -29,8 +30,10 @@ export const getProjectsByCreator = async (
   res: Response,
   next: NextFunction
 ) => {
+  const decodedUser = req.user as UserPayload;
+
   try {
-    const projects = await Project.find({ creatorId: req.params.creatorId });
+    const projects = await Project.find({ creatorId: decodedUser.id });
     if (!projects.length) {
       return next(createError(404, "No projects found for this creator."));
     }
