@@ -1,10 +1,7 @@
-import express, {
-  Express,
-  Request,
-  Response,
-  NextFunction,
-  ErrorRequestHandler,
-} from "express";
+import express, { Express, ErrorRequestHandler } from "express";
+
+import { APIGatewayEvent, Context, Callback } from "aws-lambda";
+import serverlessExpress from "aws-serverless-express";
 import cors, { CorsOptions } from "cors";
 import { createServer } from "http";
 import dotenv from "dotenv";
@@ -50,6 +47,10 @@ const corsOptions: CorsOptions = {
 app.use(cors(corsOptions));
 
 //ROUTES
+app.get("/", (req, res) => {
+  res.send("Welcome to my API");
+});
+
 app.use("/auth", authRoute);
 app.use("/user", userRoute);
 app.use("/project", projectRoute);
@@ -71,9 +72,25 @@ const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
 // Use the error handler
 app.use(errorHandler);
 
+// Start server locally if not in production
+if (process.env.NODE_ENV !== "production") {
+  const PORT = process.env.PORT || 3000;
+  app.listen(PORT, () => {
+    console.log(`Server running on ${PORT}`);
+    connect();
+  });
+}
+
 // Start Server
-const PORT = process.env.PORT;
-app.listen(PORT, () => {
-  connect();
-  console.log(`Server is running on ${process.env.PORT}`);
-});
+const server = serverlessExpress.createServer(app);
+
+// Lambda handler
+export const lambdaHandler = (
+  event: APIGatewayEvent,
+  context: Context,
+  callback: Callback
+) => {
+  return serverlessExpress.proxy(server, event, context);
+};
+
+export default app;

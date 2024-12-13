@@ -5,7 +5,7 @@
   "scripts": {
     "start": "node ./dist/app.js",
     "dev": "nodemon src/app.ts",
-    "build": "tsc"
+    "build": "tsc && cp -R node_modules dist/node_modules"
   },
   "keywords": [],
   "author": "",
@@ -13,6 +13,8 @@
   "description": "",
   "dependencies": {
     "@aws-sdk/client-s3": "^3.705.0",
+    "@vendia/serverless-express": "^4.12.6",
+    "aws-serverless-express": "^3.4.0",
     "bcrypt": "^5.1.1",
     "bcryptjs": "^2.4.3",
     "cookie-parser": "^1.4.7",
@@ -27,7 +29,9 @@
     "nodemon": "^3.1.7"
   },
   "devDependencies": {
+    "@types/aws-serverless-express": "^3.3.10",
     "@types/bcrypt": "^5.0.2",
+    "@types/bcryptjs": "^2.4.6",
     "@types/cookie-parser": "^1.4.8",
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.0",

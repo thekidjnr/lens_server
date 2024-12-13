@@ -64,3 +64,20 @@ export const uploadFile = async (
     next(error);
   }
 };
+
+export const getProjectFiles = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const projectId = req.params.projectId;
+  try {
+    const projects = await File.find({ projectId });
+    if (!projects.length) {
+      res.status(200).json([]);
+    }
+    res.status(200).json(projects);
+  } catch (err) {
+    next(err);
+  }
+};
