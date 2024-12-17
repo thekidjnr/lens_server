@@ -1,7 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { User } from "../models/user.model";
 import { createError } from "../utils/error";
-import { File } from "../models/file.model";
 
 export const getUser = async (
   req: Request,

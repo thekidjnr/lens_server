@@ -1,10 +1,11 @@
 import mongoose, { Schema, Document } from "mongoose";
 
 interface User extends Document {
-  name: string;
+  fullName: string;
   email: string;
   password: string;
   role: string;
+  isOnboarded: boolean;
 }
 
 export interface UserDocument extends User {
@@ -14,13 +15,17 @@ export interface UserDocument extends User {
 }
 
 const userSchema = new Schema<User>({
-  name: { type: String, required: true },
+  fullName: { type: String, required: true },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   role: {
     type: String,
     enum: ["admin", "creator"],
     default: "creator",
+  },
+  isOnboarded: {
+    type: Boolean,
+    default: false,
   },
 });
 

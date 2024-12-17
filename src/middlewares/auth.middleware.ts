@@ -11,21 +11,6 @@ export const validateRegister = [
     .withMessage("Password must be at least 6 characters"),
 ];
 
-// 2. Error Handling Middleware
-export const handleValidationErrors = (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): void => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    // Send a response and end the request-response cycle
-    res.status(400).json({ errors: errors.array() });
-    return;
-  }
-  next();
-};
-
 export const verifyToken = (
   req: Request,
   res: Response,

@@ -11,10 +11,10 @@ export const registerUser = async (
 ) => {
   try {
     // Extract user details from the request body
-    const { name, email, password } = req.body;
+    const { fullName, email, password } = req.body;
 
     // Validate required fields
-    if (!name || !email || !password) {
+    if (!fullName || !email || !password) {
       return next(createError(400, "All fields are required."));
     }
 
@@ -30,7 +30,7 @@ export const registerUser = async (
 
     // Create a new user
     const newUser = new User({
-      name,
+      fullName,
       email,
       password: hashedPassword,
     });
@@ -41,7 +41,7 @@ export const registerUser = async (
     // Respond with success
     res.status(201).json({
       message: "User registered successfully.",
-      user: { name, email },
+      user: { fullName, email },
     });
   } catch (error) {
     next(createError(500, "Server error. Please try again later."));

@@ -1,17 +1,20 @@
 import mongoose, { Schema, Document } from "mongoose";
 
-interface IProject extends Document {
+interface ICollection extends Document {
   name: string;
   description: string;
   creatorId: mongoose.Schema.Types.ObjectId;
   clientId: mongoose.Schema.Types.ObjectId;
 }
 
-const projectSchema = new Schema<IProject>({
+const collectionSchema = new Schema<ICollection>({
   name: { type: String, required: true },
   description: { type: String },
   creatorId: { type: Schema.Types.ObjectId, ref: "User", required: true },
   clientId: { type: Schema.Types.ObjectId, ref: "Client", required: false },
 });
 
-export const Project = mongoose.model<IProject>("Project", projectSchema);
+export const Collection = mongoose.model<ICollection>(
+  "Collection",
+  collectionSchema
+);

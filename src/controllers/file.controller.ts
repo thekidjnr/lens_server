@@ -3,6 +3,7 @@ import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import { createError } from "../utils/error";
 import path from "path";
 import { File } from "../models/file.model";
+import { Collection } from "../models/collection.model";
 
 // Initialize the AWS S3 client
 const s3Client = new S3Client({
@@ -61,6 +62,54 @@ export const uploadFile = async (
     res.status(200).json({ message: "Files uploaded successfully!" });
   } catch (error) {
     console.error("Error during file upload:", error);
+    next(error);
+  }
+};
+
+export const uploadFilesToCollection = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { files, collectionId } = req.body;
+
+    if (!collectionId) {
+      return res.status(400).json({ message: "Collection ID is required." });
+    }
+
+    if (!files || !Array.isArray(files) || files.length === 0) {
+      return res.status(400).json({ message: "No files uploaded" });
+    }
+
+    const collection = await Collection.findById(collectionId);
+    if (!collection) {
+      return res.status(404).json({ message: "Collection not found" });
+    }
+
+    const uploadedFiles = [];
+
+    for (const file of files) {
+      const { name, url, type, size } = file;
+
+      const newFile = new File({
+        name,
+        url,
+        type,
+        size,
+        collectionId,
+      });
+
+      await newFile.save();
+      uploadedFiles.push(newFile);
+    }
+
+    res.status(200).json({
+      message: "Files uploaded successfully",
+      uploadedFiles,
+    });
+  } catch (error) {
+    console.error("Error uploading files:", error);
     next(error);
   }
 };
