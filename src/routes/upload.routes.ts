@@ -1,5 +1,4 @@
 import express from "express";
-import { verifyToken } from "../middlewares/auth.middleware";
 import { upload } from "../utils/multer";
 import { uploadFiles } from "../controllers/upload.controller";
 

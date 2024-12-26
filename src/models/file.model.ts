@@ -5,7 +5,7 @@ interface IFile extends Document {
   url: string;
   size: number;
   type: string;
-  projectId: mongoose.Schema.Types.ObjectId;
+  collectionId: mongoose.Schema.Types.ObjectId;
 }
 
 const fileSchema = new Schema<IFile>({
@@ -13,9 +13,9 @@ const fileSchema = new Schema<IFile>({
   url: { type: String, required: true },
   type: { type: String, required: true },
   size: { type: Number, required: true },
-  projectId: {
+  collectionId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Project",
+    ref: "Collection",
     required: true,
   },
 });

@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { Workspace } from "../models/workspace.model";
 import { User } from "../models/user.model";
+import { createError } from "../utils/error";
 
 export const createWorkspace = async (
   req: Request,
@@ -44,14 +45,14 @@ export const getWorkspace = async (
   next: NextFunction
 ) => {
   try {
-    const { id } = req.params;
-    const workspace = await Workspace.findById(id).populate("logo");
+    const decodedUser = req.user as UserPayload;
+    const workspace = await Workspace.find({ creatorId: decodedUser.id });
 
     if (!workspace) {
-      return res.status(404).json({ message: "Workspace not found" });
+      return next(createError(404, "Workspace not found"));
     }
 
-    res.status(200).json(workspace);
+    res.status(200).json(workspace[0]);
   } catch (error) {
     console.error("Error fetching Workspace", error);
     next(error);

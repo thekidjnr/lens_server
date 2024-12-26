@@ -48,7 +48,7 @@ export const uploadFiles = async (
       });
     }
 
-    res.status(200).json({ message: "Upload successful", data: uploadedFiles });
+    res.status(200).json({ data: uploadedFiles });
   } catch (error) {
     console.error("Upload error:", error);
     next(error);

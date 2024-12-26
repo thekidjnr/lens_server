@@ -12,6 +12,7 @@ dotenv.config();
 import authRoute from "./routes/auth.routes";
 import userRoute from "./routes/user.routes";
 import collectionRoute from "./routes/collection.routes";
+import fileRoute from "./routes/file.routes";
 import workspaceRoute from "./routes/workspace.routes";
 import uploadRoute from "./routes/upload.routes";
 
@@ -55,7 +56,8 @@ app.get("/", (req, res) => {
 app.use("/auth", authRoute);
 app.use("/user", userRoute);
 app.use("/workspace", workspaceRoute);
-app.use("/collection", collectionRoute);
+app.use("/collections", collectionRoute);
+app.use("/files", fileRoute);
 app.use("/upload", uploadRoute);
 
 //ERROR HANDLERS
