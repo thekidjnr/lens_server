@@ -19,7 +19,7 @@ router.post("/", verifyToken, createCollection);
 
 router.get("/creator", verifyToken, getCollectionsByCreator);
 
-router.get("/:collectionId", getCollectionById);
+router.get("/:id", getCollectionById);
 router.put("/:collectionId", updateCollection);
 router.delete("/:collectionId", deleteCollection);
 

@@ -1,7 +1,11 @@
 import { NextFunction, Request, Response } from "express";
 import { createError } from "../utils/error";
 import path from "path";
-import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import {
+  DeleteObjectCommand,
+  PutObjectCommand,
+  S3Client,
+} from "@aws-sdk/client-s3";
 
 // Initialize the AWS S3 client
 const s3Client = new S3Client({
@@ -50,7 +54,32 @@ export const uploadFiles = async (
 
     res.status(200).json({ data: uploadedFiles });
   } catch (error) {
-    console.error("Upload error:", error);
+    next(error);
+  }
+};
+
+export const deleteFileFromS3 = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const { url } = req.body;
+  console.log(url);
+  try {
+    // Extract the key from the S3 URL
+    const urlParts = url.split("/");
+    const key = urlParts.slice(3).join("/");
+
+    // Delete the file from S3
+    const deleteParams = {
+      Bucket: process.env.AWS_BUCKET_NAME!,
+      Key: key,
+    };
+
+    await s3Client.send(new DeleteObjectCommand(deleteParams));
+
+    res.status(200).json({ message: "File deleted successfully" });
+  } catch (error) {
     next(error);
   }
 };

@@ -14,7 +14,7 @@ import userRoute from "./routes/user.routes";
 import collectionRoute from "./routes/collection.routes";
 import fileRoute from "./routes/file.routes";
 import workspaceRoute from "./routes/workspace.routes";
-import uploadRoute from "./routes/upload.routes";
+import s3Route from "./routes/s3.routes";
 
 const app: Express = express();
 const httpServer = createServer(app);
@@ -58,7 +58,7 @@ app.use("/user", userRoute);
 app.use("/workspace", workspaceRoute);
 app.use("/collections", collectionRoute);
 app.use("/files", fileRoute);
-app.use("/upload", uploadRoute);
+app.use("/s3", s3Route);
 
 //ERROR HANDLERS
 const errorHandler: ErrorRequestHandler = (err, req, res, next) => {

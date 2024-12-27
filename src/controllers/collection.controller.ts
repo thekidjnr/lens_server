@@ -50,7 +50,8 @@ export const getCollectionById = async (
   next: NextFunction
 ) => {
   try {
-    const collection = await Collection.findById(req.params.CollectionId);
+    const collection = await Collection.findById(req.params.id);
+    console.log(req.params.id);
 
     if (!collection) {
       return next(createError(404, "Collection not found."));
