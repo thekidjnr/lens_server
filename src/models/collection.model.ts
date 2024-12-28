@@ -22,7 +22,7 @@ const collectionSchema = new Schema<ICollection>({
   coverPhotoUrl: {
     type: String,
     default:
-      "https://micbucket123.s3.amazonaws.com/uploads/1735265105205-664574714.png",
+      "https://lenslyst.s3.us-east-2.amazonaws.com/Image_Placeholder.png",
   },
   noOfFiles: { type: Number, default: 0 },
   createdAt: { type: Date, default: Date.now },
