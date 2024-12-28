@@ -41,7 +41,8 @@ app.use(cookieParser());
 
 // CORS POLICIES
 const corsOptions: CorsOptions = {
-  origin: ["https://www.buknr.com", "http://localhost:3000"],
+  origin: ["https://lenslyst.com", "http://localhost:3000"],
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   credentials: true,
   exposedHeaders: ["Set-Cookie", "Date", "ETag"],
 };
@@ -50,7 +51,7 @@ app.use(cors(corsOptions));
 
 //ROUTES
 app.get("/", (req, res) => {
-  res.send("Welcome to my API");
+  res.send("Welcome Lenslyst");
 });
 
 app.use("/auth", authRoute);
@@ -76,25 +77,8 @@ const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
 // Use the error handler
 app.use(errorHandler);
 
-// Start server locally if not in production
-if (process.env.NODE_ENV !== "production") {
-  const PORT = process.env.PORT || 3000;
-  app.listen(PORT, () => {
-    console.log(`Server running on ${PORT}`);
-    connect();
-  });
-}
-
-// Start Server
-const server = serverlessExpress.createServer(app);
-
-// Lambda handler
-export const lambdaHandler = (
-  event: APIGatewayEvent,
-  context: Context,
-  callback: Callback
-) => {
-  return serverlessExpress.proxy(server, event, context);
-};
-
-export default app;
+//PORT FOR LISTENING TO APP
+httpServer.listen(`${process.env.PORT}`, () => {
+  connect();
+  console.log(`Server is running on ${process.env.PORT}`);
+});

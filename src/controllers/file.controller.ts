@@ -35,6 +35,14 @@ export const addFileToCollection = async (
     const collection = await Collection.findById(collectionId);
     if (collection) {
       collection.noOfFiles += 1;
+
+      const defaultCoverPhotoUrl =
+        "https://micbucket123.s3.amazonaws.com/uploads/1735265105205-664574714.png";
+
+      if (collection.coverPhotoUrl === defaultCoverPhotoUrl) {
+        collection.coverPhotoUrl = url;
+      }
+
       await collection.save();
     }
 
@@ -69,13 +77,40 @@ export const deleteFileFromCollection = async (
   next: NextFunction
 ) => {
   const { id } = req.params;
+
   try {
     const file = await File.findById(id);
     if (!file) {
       return next(createError(404, "No file found"));
     }
 
+    const { collectionId, url } = file;
+
+    // Delete the file
     await File.findByIdAndDelete(id);
+
+    // Update the collection
+    const collection = await Collection.findById(collectionId);
+    if (collection) {
+      // Decrement the file count
+      collection.noOfFiles -= 1;
+
+      const defaultCoverPhotoUrl =
+        "https://micbucket123.s3.amazonaws.com/uploads/1735265105205-664574714.png";
+
+      // If the deleted file was the current cover photo
+      if (collection.coverPhotoUrl === url) {
+        // Set the cover photo to the default or choose another file from the collection
+        const nextFile = await File.findOne({ collectionId });
+
+        collection.coverPhotoUrl = nextFile
+          ? nextFile.url // Use another file's URL as the new cover photo
+          : defaultCoverPhotoUrl; // Default cover photo if no files are left
+      }
+
+      await collection.save();
+    }
+
     res.status(200).json({ message: "File deleted successfully" });
   } catch (error) {
     next(error);
