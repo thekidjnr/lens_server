@@ -2,29 +2,34 @@ import mongoose, { Schema, Document } from "mongoose";
 
 interface ICollection extends Document {
   name: string;
+  slug: string;
+  url: string;
   description: string;
   creatorId: mongoose.Schema.Types.ObjectId;
   workspaceId: mongoose.Schema.Types.ObjectId;
   noOfFiles: number;
+  isPublished: boolean;
   coverPhotoUrl: string;
   createdAt: Date;
 }
 
 const collectionSchema = new Schema<ICollection>({
   name: { type: String, required: true },
+  slug: { type: String, required: true, unique: true }, // Add this
   description: { type: String },
   creatorId: { type: Schema.Types.ObjectId, ref: "User", required: true },
   workspaceId: {
     type: Schema.Types.ObjectId,
     ref: "Workspace",
-    required: false,
+    required: true,
   },
   coverPhotoUrl: {
     type: String,
-    default:
-      "https://lenslyst.s3.us-east-2.amazonaws.com/Image_Placeholder.png",
+    default: "https://lenslyst.s3.amazonaws.com/Image_Placeholder.png",
   },
   noOfFiles: { type: Number, default: 0 },
+  isPublished: { type: Boolean, default: false }, // Add this
+  url: { type: String },
   createdAt: { type: Date, default: Date.now },
 });
 

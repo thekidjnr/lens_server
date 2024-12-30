@@ -9,10 +9,10 @@ export const addFileToCollection = async (
   res: Response,
   next: NextFunction
 ) => {
-  const { collectionId, fileData } = req.body;
+  const { collectionSlug, fileData } = req.body;
 
-  if (!collectionId || !fileData) {
-    return next(createError(400, "Missing collectionId or fileData"));
+  if (!collectionSlug || !fileData) {
+    return next(createError(400, "Missing collectionSlug or fileData"));
   }
 
   try {
@@ -27,17 +27,18 @@ export const addFileToCollection = async (
       url,
       size,
       type,
-      collectionId,
+      collectionSlug,
     });
 
     await newFile.save();
 
-    const collection = await Collection.findById(collectionId);
+    const collection = await Collection.findOne({ slug: collectionSlug });
+
     if (collection) {
       collection.noOfFiles += 1;
 
       const defaultCoverPhotoUrl =
-        "https://micbucket123.s3.amazonaws.com/uploads/1735265105205-664574714.png";
+        "https://lenslyst.s3.us-east-2.amazonaws.com/Image_Placeholder.png";
 
       if (collection.coverPhotoUrl === defaultCoverPhotoUrl) {
         collection.coverPhotoUrl = url;
@@ -57,10 +58,10 @@ export const getFilesByCollection = async (
   res: Response,
   next: NextFunction
 ) => {
-  const { collectionId } = req.params;
-
+  const { slug } = req.params;
+  console.log(slug);
   try {
-    const files = await File.find({ collectionId });
+    const files = await File.find({ collectionSlug: slug });
     if (!files.length) {
       return next(createError(404, "No files found for this collection."));
     }
@@ -76,36 +77,32 @@ export const deleteFileFromCollection = async (
   res: Response,
   next: NextFunction
 ) => {
-  const { id } = req.params;
+  const { slug } = req.params;
+  console.log(slug);
 
   try {
-    const file = await File.findById(id);
+    const file = await File.findOne({ collectionSlug: slug });
     if (!file) {
       return next(createError(404, "No file found"));
     }
 
-    const { collectionId, url } = file;
+    const { collectionSlug, url } = file;
 
-    // Delete the file
-    await File.findByIdAndDelete(id);
+    await File.findOneAndDelete({ collectionSlug: slug });
 
-    // Update the collection
-    const collection = await Collection.findById(collectionId);
+    const collection = await Collection.findOne({ slug: collectionSlug });
     if (collection) {
-      // Decrement the file count
       collection.noOfFiles -= 1;
 
       const defaultCoverPhotoUrl =
-        "https://micbucket123.s3.amazonaws.com/uploads/1735265105205-664574714.png";
+        "https://lenslyst.s3.us-east-2.amazonaws.com/Image_Placeholder.png";
 
-      // If the deleted file was the current cover photo
       if (collection.coverPhotoUrl === url) {
-        // Set the cover photo to the default or choose another file from the collection
-        const nextFile = await File.findOne({ collectionId });
+        const nextFile = await File.findOne({ collectionSlug: slug });
 
         collection.coverPhotoUrl = nextFile
-          ? nextFile.url // Use another file's URL as the new cover photo
-          : defaultCoverPhotoUrl; // Default cover photo if no files are left
+          ? nextFile.url
+          : defaultCoverPhotoUrl;
       }
 
       await collection.save();

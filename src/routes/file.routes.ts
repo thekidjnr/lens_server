@@ -10,7 +10,7 @@ import {
 const router = Router();
 
 router.post("/", verifyToken, addFileToCollection);
-router.get("/:collectionId", verifyToken, getFilesByCollection);
-router.delete("/:id", verifyToken, deleteFileFromCollection);
+router.get("/:slug", verifyToken, getFilesByCollection);
+router.delete("/:slug", verifyToken, deleteFileFromCollection);
 
 export default router;

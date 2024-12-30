@@ -1,6 +1,8 @@
 import { Request, Response, NextFunction } from "express";
 import { Collection } from "../models/collection.model";
 import { createError } from "../utils/error";
+import { Workspace } from "../models/workspace.model";
+import slugify from "slugify";
 
 export const createCollection = async (
   req: Request,
@@ -11,14 +13,40 @@ export const createCollection = async (
     const decodedUser = req.user as UserPayload;
     const { name, description, workspaceId } = req.body;
 
+    const workspace = await Workspace.findById(workspaceId);
+    if (!workspace) {
+      return next(createError(404, "Workspace not found"));
+    }
+
+    const slug = slugify(name, { lower: true, strict: true });
+
+    const existingCollection = await Collection.findOne({
+      slug,
+      workspaceId,
+    });
+
+    if (existingCollection) {
+      return next(
+        createError(
+          400,
+          "A collection with this name already exists in the workspace."
+        )
+      );
+    }
+
+    const url = `${workspace.domain}/${slug}`;
+
     const newCollection = new Collection({
       name,
+      slug,
       description,
       workspaceId,
       creatorId: decodedUser.id,
+      url,
     });
 
     await newCollection.save();
+
     res.status(201).json(newCollection);
   } catch (err) {
     next(err);
@@ -52,6 +80,24 @@ export const getCollectionById = async (
   try {
     const collection = await Collection.findById(req.params.id);
     console.log(req.params.id);
+
+    if (!collection) {
+      return next(createError(404, "Collection not found."));
+    }
+
+    res.status(200).json(collection);
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const getCollectionBySlug = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const collection = await Collection.findOne({ slug: req.params.slug });
 
     if (!collection) {
       return next(createError(404, "Collection not found."));

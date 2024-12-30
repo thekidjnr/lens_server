@@ -11,7 +11,11 @@ export const createWorkspace = async (
   try {
     const decodedUser = req.user as UserPayload;
 
-    const { name, domain, logo } = req.body;
+    const { name, logo } = req.body;
+
+    const sanitizedDomain = name.toLowerCase().replace(/\s+/g, "-");
+    const domain = `${sanitizedDomain}.lenslyst.com`;
+
     const workspace = new Workspace({
       name,
       domain,
@@ -33,7 +37,6 @@ export const createWorkspace = async (
       workspace,
     });
   } catch (error) {
-    console.error("Error creating workspace:", error);
     next(error);
   }
 };

@@ -5,6 +5,7 @@ import {
   updateCollection,
   deleteCollection,
   createCollection,
+  getCollectionBySlug,
 } from "../controllers/collection.controller";
 import multer from "multer"; // For file upload
 import { verifyToken } from "../middlewares/auth.middleware";
@@ -19,7 +20,9 @@ router.post("/", verifyToken, createCollection);
 
 router.get("/creator", verifyToken, getCollectionsByCreator);
 
-router.get("/:id", getCollectionById);
+router.get("/id/:id", getCollectionById);
+router.get("/slug/:slug", getCollectionBySlug);
+
 router.put("/:collectionId", updateCollection);
 router.delete("/:collectionId", deleteCollection);
 

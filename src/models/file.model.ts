@@ -5,7 +5,7 @@ interface IFile extends Document {
   url: string;
   size: number;
   type: string;
-  collectionId: mongoose.Schema.Types.ObjectId;
+  collectionSlug: string;
 }
 
 const fileSchema = new Schema<IFile>({
@@ -13,11 +13,7 @@ const fileSchema = new Schema<IFile>({
   url: { type: String, required: true },
   type: { type: String, required: true },
   size: { type: Number, required: true },
-  collectionId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Collection",
-    required: true,
-  },
+  collectionSlug: { type: String, required: true },
 });
 
 export const File = mongoose.model<IFile>("File", fileSchema);
