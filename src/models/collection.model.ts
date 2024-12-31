@@ -15,7 +15,7 @@ interface ICollection extends Document {
 
 const collectionSchema = new Schema<ICollection>({
   name: { type: String, required: true },
-  slug: { type: String, required: true, unique: true }, // Add this
+  slug: { type: String, required: true },
   description: { type: String },
   creatorId: { type: Schema.Types.ObjectId, ref: "User", required: true },
   workspaceId: {
@@ -28,10 +28,12 @@ const collectionSchema = new Schema<ICollection>({
     default: "https://lenslyst.s3.amazonaws.com/Image_Placeholder.png",
   },
   noOfFiles: { type: Number, default: 0 },
-  isPublished: { type: Boolean, default: false }, // Add this
+  isPublished: { type: Boolean, default: false },
   url: { type: String },
   createdAt: { type: Date, default: Date.now },
 });
+
+collectionSchema.index({ slug: 1, workspaceId: 1 }, { unique: true });
 
 export const Collection = mongoose.model<ICollection>(
   "Collection",

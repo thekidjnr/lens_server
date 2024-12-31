@@ -11,6 +11,6 @@ const router = Router();
 
 router.post("/", verifyToken, addFileToCollection);
 router.get("/:slug", verifyToken, getFilesByCollection);
-router.delete("/:slug", verifyToken, deleteFileFromCollection);
+router.delete("/:fileId", verifyToken, deleteFileFromCollection);
 
 export default router;

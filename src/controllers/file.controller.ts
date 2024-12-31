@@ -59,7 +59,7 @@ export const getFilesByCollection = async (
   next: NextFunction
 ) => {
   const { slug } = req.params;
-  console.log(slug);
+
   try {
     const files = await File.find({ collectionSlug: slug });
     if (!files.length) {
@@ -77,19 +77,20 @@ export const deleteFileFromCollection = async (
   res: Response,
   next: NextFunction
 ) => {
-  const { slug } = req.params;
-  console.log(slug);
+  const { fileId } = req.params;
 
   try {
-    const file = await File.findOne({ collectionSlug: slug });
+    const file = await File.findById(fileId);
     if (!file) {
-      return next(createError(404, "No file found"));
+      return next(createError(404, "File not found"));
     }
 
     const { collectionSlug, url } = file;
 
-    await File.findOneAndDelete({ collectionSlug: slug });
+    // Delete the file
+    await File.findByIdAndDelete(fileId);
 
+    // Find the collection and update its metadata
     const collection = await Collection.findOne({ slug: collectionSlug });
     if (collection) {
       collection.noOfFiles -= 1;
@@ -97,8 +98,9 @@ export const deleteFileFromCollection = async (
       const defaultCoverPhotoUrl =
         "https://lenslyst.s3.us-east-2.amazonaws.com/Image_Placeholder.png";
 
+      // Update cover photo if the deleted file was the cover
       if (collection.coverPhotoUrl === url) {
-        const nextFile = await File.findOne({ collectionSlug: slug });
+        const nextFile = await File.findOne({ collectionSlug });
 
         collection.coverPhotoUrl = nextFile
           ? nextFile.url

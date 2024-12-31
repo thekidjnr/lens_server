@@ -64,7 +64,6 @@ export const deleteFileFromS3 = async (
   next: NextFunction
 ) => {
   const { url } = req.body;
-  console.log(url);
   try {
     // Extract the key from the S3 URL
     const urlParts = url.split("/");

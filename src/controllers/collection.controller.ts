@@ -97,7 +97,10 @@ export const getCollectionBySlug = async (
   next: NextFunction
 ) => {
   try {
-    const collection = await Collection.findOne({ slug: req.params.slug });
+    const { workspaceId } = req.params;
+    const { slug } = req.params;
+
+    const collection = await Collection.findOne({ slug, workspaceId });
 
     if (!collection) {
       return next(createError(404, "Collection not found."));
@@ -126,6 +129,34 @@ export const updateCollection = async (
     res.status(200).json(updatedCollection);
   } catch (err) {
     next(err);
+  }
+};
+
+export const collectionStatus = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const { slug } = req.params;
+
+  try {
+    const collection = await Collection.findOne({ slug });
+    if (!collection) {
+      return next(createError(404, "Collection not found."));
+    }
+
+    collection.isPublished = !collection.isPublished;
+
+    await collection.save();
+
+    res.status(200).json({
+      message: `Collection ${
+        collection.isPublished ? "published" : "unpublished"
+      } successfully`,
+      isPublished: collection.isPublished,
+    });
+  } catch (error) {
+    next(error);
   }
 };
 
