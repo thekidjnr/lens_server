@@ -12,6 +12,7 @@ export interface IWorkspace extends Document {
   } | null;
   creatorId: mongoose.Schema.Types.ObjectId;
   storageUsed: number;
+  storageLimit: number;
   deleted: boolean;
 }
 
@@ -27,6 +28,11 @@ const workspaceSchema = new Schema<IWorkspace>(
     },
     creatorId: { type: Schema.Types.ObjectId, ref: "User", required: true },
     storageUsed: { type: Number, default: 0 },
+    storageLimit: {
+      type: Number,
+      required: true,
+      default: 2 * 1024 * 1024 * 1024,
+    },
     deleted: { type: Boolean, default: false },
   },
   {
