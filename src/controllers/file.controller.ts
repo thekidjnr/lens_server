@@ -3,6 +3,7 @@ import { File } from "../models/file.model";
 import { createError } from "../utils/error";
 import mongoose from "mongoose";
 import { Collection } from "../models/collection.model";
+import { Workspace } from "../models/workspace.model";
 
 export const addFileToCollection = async (
   req: Request,
@@ -44,6 +45,12 @@ export const addFileToCollection = async (
       }
 
       await collection.save();
+
+      const workspace = await Workspace.findById(collection.workspaceId);
+      if (workspace) {
+        workspace.storageUsed += size;
+        await workspace.save();
+      }
     }
 
     res.status(201).json({ file: newFile });
@@ -84,19 +91,16 @@ export const deleteFileFromCollection = async (
       return next(createError(404, "File not found"));
     }
 
-    const { collectionSlug, url } = file;
+    const { collectionSlug, url, size } = file;
 
-    // Delete the file
     await File.findByIdAndDelete(fileId);
 
-    // Find the collection and update its metadata
     const collection = await Collection.findOne({ slug: collectionSlug });
     if (collection) {
       collection.noOfFiles -= 1;
 
       const defaultCoverPhotoUrl = process.env.COLLECTION_COVER_PLACEHOLDER!;
 
-      // Update cover photo if the deleted file was the cover
       if (collection.coverPhotoUrl === url) {
         const nextFile = await File.findOne({ collectionSlug });
 
@@ -106,6 +110,12 @@ export const deleteFileFromCollection = async (
       }
 
       await collection.save();
+
+      const workspace = await Workspace.findById(collection.workspaceId);
+      if (workspace) {
+        workspace.storageUsed = Math.max(0, workspace.storageUsed - size);
+        await workspace.save();
+      }
     }
 
     res.status(200).json({ message: "File deleted successfully" });

@@ -11,6 +11,8 @@ export interface IWorkspace extends Document {
     type: string;
   } | null;
   creatorId: mongoose.Schema.Types.ObjectId;
+  storageUsed: number;
+  deleted: boolean;
 }
 
 const workspaceSchema = new Schema<IWorkspace>(
@@ -24,6 +26,8 @@ const workspaceSchema = new Schema<IWorkspace>(
       type: { type: String, required: false },
     },
     creatorId: { type: Schema.Types.ObjectId, ref: "User", required: true },
+    storageUsed: { type: Number, default: 0 },
+    deleted: { type: Boolean, default: false },
   },
   {
     timestamps: true,
