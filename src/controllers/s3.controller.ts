@@ -59,8 +59,6 @@ export const uploadFiles = async (
       });
     }
 
-    console.log("uploaded", uploadFiles);
-
     res.status(200).json({ data: uploadedFiles });
   } catch (error) {
     next(error);
