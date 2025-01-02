@@ -25,7 +25,7 @@ const collectionSchema = new Schema<ICollection>({
   },
   coverPhotoUrl: {
     type: String,
-    default: "https://lenslyst.s3.amazonaws.com/Image_Placeholder.png",
+    default: process.env.COLLECTION_COVER_PLACEHOLDER!,
   },
   noOfFiles: { type: Number, default: 0 },
   isPublished: { type: Boolean, default: false },

@@ -37,8 +37,7 @@ export const addFileToCollection = async (
     if (collection) {
       collection.noOfFiles += 1;
 
-      const defaultCoverPhotoUrl =
-        "https://lenslyst.s3.us-east-2.amazonaws.com/Image_Placeholder.png";
+      const defaultCoverPhotoUrl = process.env.COLLECTION_COVER_PLACEHOLDER!;
 
       if (collection.coverPhotoUrl === defaultCoverPhotoUrl) {
         collection.coverPhotoUrl = url;
@@ -95,8 +94,7 @@ export const deleteFileFromCollection = async (
     if (collection) {
       collection.noOfFiles -= 1;
 
-      const defaultCoverPhotoUrl =
-        "https://lenslyst.s3.us-east-2.amazonaws.com/Image_Placeholder.png";
+      const defaultCoverPhotoUrl = process.env.COLLECTION_COVER_PLACEHOLDER!;
 
       // Update cover photo if the deleted file was the cover
       if (collection.coverPhotoUrl === url) {
