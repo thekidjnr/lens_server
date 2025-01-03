@@ -7,6 +7,7 @@ import {
   S3Client,
 } from "@aws-sdk/client-s3";
 import { generateSignedUrl, uploadToS3 } from "../utils/s3";
+import sharp from "sharp";
 
 // Initialize the AWS S3 client
 const s3Client = new S3Client({
@@ -36,11 +37,30 @@ export const uploadFiles = async (
         Math.random() * 1e9
       )}${path.extname(file.originalname)}`;
 
+      const metadata = await sharp(file.buffer).metadata();
+      let processedBuffer = file.buffer;
+
+      if (
+        metadata.width &&
+        metadata.height &&
+        (metadata.width > 1920 || metadata.height > 1080)
+      ) {
+        processedBuffer = await sharp(file.buffer)
+          .resize({
+            width: 1920,
+            height: 1080,
+            fit: "inside",
+            withoutEnlargement: true,
+          })
+          .jpeg({ quality: 100 })
+          .toBuffer();
+      }
+
       // Upload file to S3
       await uploadToS3(
         process.env.AWS_BUCKET_NAME!,
         fileKey,
-        file.buffer,
+        processedBuffer,
         file.mimetype
       );
 
@@ -54,7 +74,7 @@ export const uploadFiles = async (
       uploadedFiles.push({
         name: file.originalname,
         url: signedUrl,
-        size: file.size,
+        size: processedBuffer.length,
         type: file.mimetype,
       });
     }
