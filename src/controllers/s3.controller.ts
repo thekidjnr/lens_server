@@ -37,34 +37,13 @@ export const uploadFiles = async (
         Math.random() * 1e9
       )}${path.extname(file.originalname)}`;
 
-      const metadata = await sharp(file.buffer).metadata();
-      let processedBuffer = file.buffer;
-
-      if (
-        metadata.width &&
-        metadata.height &&
-        (metadata.width > 1920 || metadata.height > 1080)
-      ) {
-        processedBuffer = await sharp(file.buffer)
-          .resize({
-            width: 1920,
-            height: 1080,
-            fit: "inside",
-            withoutEnlargement: true,
-          })
-          .jpeg({ quality: 100 })
-          .toBuffer();
-      }
-
-      // Upload file to S3
       await uploadToS3(
         process.env.AWS_BUCKET_NAME!,
         fileKey,
-        processedBuffer,
+        file.buffer,
         file.mimetype
       );
 
-      // Generate signed URL
       const signedUrl = await generateSignedUrl(
         process.env.AWS_BUCKET_NAME!,
         fileKey,
@@ -74,7 +53,7 @@ export const uploadFiles = async (
       uploadedFiles.push({
         name: file.originalname,
         url: signedUrl,
-        size: processedBuffer.length,
+        size: file.size,
         type: file.mimetype,
       });
     }

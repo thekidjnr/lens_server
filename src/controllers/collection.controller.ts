@@ -34,7 +34,7 @@ export const createCollection = async (
       );
     }
 
-    const url = `${workspace.domain}/${slug}`;
+    const url = `${process.env.CLIENT_URL}/photos/${workspace._id}/${slug}`;
 
     const newCollection = new Collection({
       name,
@@ -96,8 +96,7 @@ export const getCollectionBySlug = async (
   next: NextFunction
 ) => {
   try {
-    const { workspaceId } = req.params;
-    const { slug } = req.params;
+    const { workspaceId, slug } = req.params;
 
     const collection = await Collection.findOne({ slug, workspaceId });
 
@@ -105,7 +104,18 @@ export const getCollectionBySlug = async (
       return next(createError(404, "Collection not found."));
     }
 
-    res.status(200).json(collection);
+    const workspace = await Workspace.findById(workspaceId).select("name");
+
+    if (!workspace) {
+      return next(createError(404, "Workspace not found."));
+    }
+
+    const response = {
+      ...collection.toObject(),
+      workspaceName: workspace.name,
+    };
+
+    res.status(200).json(response);
   } catch (err) {
     next(err);
   }
