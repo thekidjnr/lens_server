@@ -17,15 +17,17 @@ export const addFileToCollection = async (
   }
 
   try {
-    const { name, url, size, type } = fileData;
+    const { name, url, key, expirationTime, size, type } = fileData;
 
-    if (!name || !url || !size || !type) {
+    if (!name || !url || !key || !expirationTime || !size || !type) {
       return next(createError(400, "Invalid file data"));
     }
 
     const newFile = new File({
       name,
       url,
+      key,
+      expirationTime,
       size,
       type,
       collectionSlug,
