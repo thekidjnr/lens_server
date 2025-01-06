@@ -9,7 +9,7 @@ interface ICollection extends Document {
   workspaceId: mongoose.Schema.Types.ObjectId;
   noOfFiles: number;
   isPublished: boolean;
-  coverPhotoUrl: string;
+  coverPhotoKey: string;
   createdAt: Date;
 }
 
@@ -23,9 +23,8 @@ const collectionSchema = new Schema<ICollection>({
     ref: "Workspace",
     required: true,
   },
-  coverPhotoUrl: {
+  coverPhotoKey: {
     type: String,
-    default: `${process.env.CLOUDFRONT_DOMAIN}/Image_Placeholder.png`,
   },
   noOfFiles: { type: Number, default: 0 },
   isPublished: { type: Boolean, default: false },

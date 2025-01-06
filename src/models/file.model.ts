@@ -9,13 +9,18 @@ interface IFile extends Document {
   collectionSlug: string;
 }
 
-const fileSchema = new Schema<IFile>({
-  name: { type: String, required: true },
-  key: { type: String, required: true },
-  type: { type: String, required: true },
-  size: { type: Number, required: true },
-  url: { type: String },
-  collectionSlug: { type: String, required: true },
-});
+const fileSchema = new Schema<IFile>(
+  {
+    name: { type: String, required: true },
+    key: { type: String, required: true },
+    type: { type: String, required: true },
+    size: { type: Number, required: true },
+    url: { type: String },
+    collectionSlug: { type: String, required: true },
+  },
+  { timestamps: true }
+);
+
+fileSchema.index({ collectionSlug: 1 });
 
 export const File = mongoose.model<IFile>("File", fileSchema);
