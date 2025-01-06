@@ -25,7 +25,7 @@ const collectionSchema = new Schema<ICollection>({
   },
   coverPhotoUrl: {
     type: String,
-    default: process.env.COLLECTION_COVER_PLACEHOLDER!,
+    default: `${process.env.CLOUDFRONT_DOMAIN}/Image_Placeholder.png`,
   },
   noOfFiles: { type: Number, default: 0 },
   isPublished: { type: Boolean, default: false },

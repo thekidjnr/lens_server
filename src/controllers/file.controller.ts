@@ -17,17 +17,15 @@ export const addFileToCollection = async (
   }
 
   try {
-    const { name, url, key, expirationTime, size, type } = fileData;
+    const { name, key, size, type } = fileData;
 
-    if (!name || !url || !key || !expirationTime || !size || !type) {
+    if (!name || !key || !size || !type) {
       return next(createError(400, "Invalid file data"));
     }
 
     const newFile = new File({
       name,
-      url,
       key,
-      expirationTime,
       size,
       type,
       collectionSlug,
@@ -40,10 +38,11 @@ export const addFileToCollection = async (
     if (collection) {
       collection.noOfFiles += 1;
 
-      const defaultCoverPhotoUrl = process.env.COLLECTION_COVER_PLACEHOLDER!;
-
-      if (collection.coverPhotoUrl === defaultCoverPhotoUrl) {
-        collection.coverPhotoUrl = url;
+      if (
+        collection.coverPhotoUrl ===
+        `${process.env.CLOUDFRONT_DOMAIN}/Image_Placeholder.png`
+      ) {
+        collection.coverPhotoUrl = `${process.env.CLOUDFRONT_DOMAIN}/` + key;
       }
 
       await collection.save();
@@ -74,6 +73,10 @@ export const getFilesByCollection = async (
       return next(createError(404, "No files found for this collection."));
     }
 
+    for (const file of files) {
+      file.url = `${process.env.CLOUDFRONT_DOMAIN}/` + file.key;
+    }
+
     res.status(200).json(files);
   } catch (err) {
     next(err);
@@ -93,32 +96,32 @@ export const deleteFileFromCollection = async (
       return next(createError(404, "File not found"));
     }
 
-    const { collectionSlug, url, size } = file;
+    // const { collectionSlug, url, size } = file;
 
     await File.findByIdAndDelete(fileId);
 
-    const collection = await Collection.findOne({ slug: collectionSlug });
-    if (collection) {
-      collection.noOfFiles -= 1;
+    // const collection = await Collection.findOne({ slug: collectionSlug });
+    // if (collection) {
+    //   collection.noOfFiles -= 1;
 
-      const defaultCoverPhotoUrl = process.env.COLLECTION_COVER_PLACEHOLDER!;
+    //   const defaultCoverPhotoUrl = process.env.COLLECTION_COVER_PLACEHOLDER!;
 
-      if (collection.coverPhotoUrl === url) {
-        const nextFile = await File.findOne({ collectionSlug });
+    //   if (collection.coverPhotoUrl === url) {
+    //     const nextFile = await File.findOne({ collectionSlug });
 
-        collection.coverPhotoUrl = nextFile
-          ? nextFile.url
-          : defaultCoverPhotoUrl;
-      }
+    //     collection.coverPhotoUrl = nextFile
+    //       ? nextFile.url
+    //       : defaultCoverPhotoUrl;
+    //   }
 
-      await collection.save();
+    //   await collection.save();
 
-      const workspace = await Workspace.findById(collection.workspaceId);
-      if (workspace) {
-        workspace.storageUsed = Math.max(0, workspace.storageUsed - size);
-        await workspace.save();
-      }
-    }
+    //   const workspace = await Workspace.findById(collection.workspaceId);
+    //   if (workspace) {
+    //     workspace.storageUsed = Math.max(0, workspace.storageUsed - size);
+    //     await workspace.save();
+    //   }
+    // }
 
     res.status(200).json({ message: "File deleted successfully" });
   } catch (error) {

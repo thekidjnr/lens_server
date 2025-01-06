@@ -2,8 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { createError } from "../utils/error";
 import path from "path";
 import { DeleteObjectCommand, S3Client } from "@aws-sdk/client-s3";
-import { generateSignedUrl, uploadToS3 } from "../utils/s3";
-import sharp from "sharp";
+import { uploadToS3 } from "../utils/s3";
 import { File } from "../models/file.model";
 
 // Initialize the AWS S3 client
@@ -30,7 +29,7 @@ export const uploadFiles = async (
     const uploadedFiles = [];
 
     for (const file of files) {
-      const fileKey = `uploads/${Date.now()}-${Math.round(
+      const fileKey = `photos/${Date.now()}-${Math.round(
         Math.random() * 1e9
       )}${path.extname(file.originalname)}`;
 
@@ -41,17 +40,9 @@ export const uploadFiles = async (
         file.mimetype
       );
 
-      const { url, expirationTime } = await generateSignedUrl(
-        process.env.AWS_BUCKET_NAME!,
-        fileKey,
-        file.originalname
-      );
-
       uploadedFiles.push({
         name: file.originalname,
-        url,
         key: fileKey,
-        expirationTime,
         size: file.size,
         type: file.mimetype,
       });
@@ -63,39 +54,39 @@ export const uploadFiles = async (
   }
 };
 
-export const refreshPresignedUrl = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  const { fileId } = req.body;
+// export const refreshPresignedUrl = async (
+//   req: Request,
+//   res: Response,
+//   next: NextFunction
+// ) => {
+//   const { fileId } = req.body;
 
-  if (!fileId) {
-    return next(createError(400, "File ID is required"));
-  }
+//   if (!fileId) {
+//     return next(createError(400, "File ID is required"));
+//   }
 
-  try {
-    const file = await File.findById(fileId);
-    if (!file) {
-      return next(createError(404, "File not found"));
-    }
+//   try {
+//     const file = await File.findById(fileId);
+//     if (!file) {
+//       return next(createError(404, "File not found"));
+//     }
 
-    const { url, expirationTime } = await generateSignedUrl(
-      process.env.AWS_BUCKET_NAME!,
-      file.key,
-      file.name
-    );
+//     const { url, expirationTime } = await generateSignedUrl(
+//       process.env.AWS_BUCKET_NAME!,
+//       file.key,
+//       file.name
+//     );
 
-    // Update the database with the new expiration time
-    file.url = url;
-    file.expirationTime = expirationTime;
-    await file.save();
+//     // Update the database with the new expiration time
+//     file.url = url;
+//     file.expirationTime = expirationTime;
+//     await file.save();
 
-    res.status(200).json({ url, expirationTime });
-  } catch (error) {
-    next(error);
-  }
-};
+//     res.status(200).json({ url, expirationTime });
+//   } catch (error) {
+//     next(error);
+//   }
+// };
 
 export const deleteFileFromS3 = async (
   req: Request,
