@@ -1,4 +1,5 @@
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/cloudfront-signer";
 
 const s3Client = new S3Client({
   region: process.env.AWS_REGION,
@@ -6,10 +7,8 @@ const s3Client = new S3Client({
     accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
   },
-  logger: console,
 });
 
-// Function to upload a file to S3
 export const uploadToS3 = async (
   bucketName: string,
   fileKey: string,
@@ -27,4 +26,11 @@ export const uploadToS3 = async (
   return fileKey;
 };
 
-// Cloud Front
+export const generateSignedUrl = (key: string) => {
+  return getSignedUrl({
+    url: `${process.env.CLOUDFRONT_DOMAIN}/${key}`,
+    dateLessThan: new Date(Date.now() + 1000 * 60 * 60 * 24).toISOString(),
+    keyPairId: process.env.CLOUDFRONT_KEY_PAIR_ID!,
+    privateKey: process.env.CLOUDFRONT_PRIVATE_KEY!,
+  });
+};

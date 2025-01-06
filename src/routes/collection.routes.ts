@@ -7,18 +7,17 @@ import {
   createCollection,
   getCollectionBySlug,
   collectionStatus,
+  getCollectionsByWorkspace,
 } from "../controllers/collection.controller";
 import multer from "multer"; // For file upload
 import { verifyToken } from "../middlewares/auth.middleware";
 
 const router = Router();
 
-// Multer configuration for file upload
-const upload = multer({ storage: multer.memoryStorage() });
-
 // Routes for handling Collections
 router.post("/", verifyToken, createCollection);
 
+router.get("/workspace/:workspaceId", verifyToken, getCollectionsByWorkspace);
 router.get("/creator", verifyToken, getCollectionsByCreator);
 router.get("/id/:id", getCollectionById);
 router.get("/workspace/:workspaceId/slug/:slug", getCollectionBySlug);

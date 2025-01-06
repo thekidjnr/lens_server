@@ -3,6 +3,9 @@ import { Collection } from "../models/collection.model";
 import { createError } from "../utils/error";
 import { Workspace } from "../models/workspace.model";
 import slugify from "slugify";
+import { File } from "../models/file.model";
+import { getSignedUrl } from "@aws-sdk/cloudfront-signer";
+import { generateSignedUrl } from "../utils/s3";
 
 export const createCollection = async (
   req: Request,
@@ -53,6 +56,35 @@ export const createCollection = async (
   }
 };
 
+export const getCollectionsByWorkspace = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const { workspaceId } = req.params;
+
+  try {
+    const workspace = await Workspace.findById(workspaceId).select(
+      "workspaceId"
+    );
+    if (!workspace) return next(createError(404, "Workspace not found"));
+
+    const collections = await Collection.find({ workspaceId: workspace._id });
+    if (!collections.length)
+      return next(createError(404, "No Collections found for this creator."));
+
+    for (const collection of collections) {
+      if (collection.coverPhotoKey) {
+        collection.coverPhotoUrl = generateSignedUrl(collection.coverPhotoKey);
+      }
+    }
+
+    res.status(200).json(collections);
+  } catch (err) {
+    next(err);
+  }
+};
+
 export const getCollectionsByCreator = async (
   req: Request,
   res: Response,
@@ -95,29 +127,40 @@ export const getCollectionBySlug = async (
   res: Response,
   next: NextFunction
 ) => {
-  try {
-    const { workspaceId, slug } = req.params;
+  const { workspaceId, slug } = req.params;
 
+  try {
+    // Fetch collection by slug and workspaceId
     const collection = await Collection.findOne({ slug, workspaceId });
 
     if (!collection) {
       return next(createError(404, "Collection not found."));
     }
 
+    // Add signed URL for cover photo if it exists
+    const collectionData = collection.toObject();
+    if (collection.coverPhotoKey) {
+      collectionData.coverPhotoUrl = generateSignedUrl(
+        collection.coverPhotoKey
+      );
+    }
+
+    // Fetch workspace name
     const workspace = await Workspace.findById(workspaceId).select("name");
 
     if (!workspace) {
       return next(createError(404, "Workspace not found."));
     }
 
+    // Combine collection data with workspace name
     const response = {
-      ...collection.toObject(),
+      ...collectionData,
       workspaceName: workspace.name,
     };
 
     res.status(200).json(response);
-  } catch (err) {
-    next(err);
+  } catch (error) {
+    next(error);
   }
 };
 

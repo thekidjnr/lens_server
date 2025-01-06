@@ -24,6 +24,24 @@ export const addFileToCollection = async (
       return next(createError(400, "Invalid file data"));
     }
 
+    // Check if file already exists in the collection
+    const existingFile = await File.findOne({ key, collectionSlug });
+    if (existingFile) {
+      return next(
+        createError(
+          409,
+          "File with the same key already exists in the collection"
+        )
+      );
+    }
+
+    const collection = await Collection.findOne({ slug: collectionSlug });
+
+    if (!collection) {
+      return next(createError(404, "Collection not found"));
+    }
+
+    // Add the new file
     const newFile = new File({
       name,
       key,
@@ -34,22 +52,20 @@ export const addFileToCollection = async (
 
     await newFile.save();
 
-    const collection = await Collection.findOne({ slug: collectionSlug });
+    // Update collection atomically
+    const updateFields: any = { $inc: { noOfFiles: 1 } };
 
-    if (collection) {
-      collection.noOfFiles += 1;
+    if (!collection.coverPhotoKey) {
+      updateFields.$set = { coverPhotoKey: key };
+    }
 
-      if (!collection.coverPhotoKey) {
-        collection.coverPhotoKey = key;
-      }
+    await Collection.updateOne({ slug: collectionSlug }, updateFields);
 
-      await collection.save();
-
-      const workspace = await Workspace.findById(collection.workspaceId);
-      if (workspace) {
-        workspace.storageUsed += size;
-        await workspace.save();
-      }
+    // Update workspace storage used
+    const workspace = await Workspace.findById(collection.workspaceId);
+    if (workspace) {
+      workspace.storageUsed += size;
+      await workspace.save();
     }
 
     res.status(201).json({ file: newFile });
@@ -105,23 +121,31 @@ export const deleteFileFromCollection = async (
 
     const { collectionSlug, key, size } = file;
 
-    await File.findByIdAndDelete(fileId).session(session);
+    // Delete the file
+    const deletedFile = await File.findByIdAndDelete(fileId).session(session);
+    if (!deletedFile) {
+      await session.abortTransaction();
+      return next(createError(500, "Failed to delete file"));
+    }
 
+    // Find the collection
     const collection = await Collection.findOne({
       slug: collectionSlug,
     }).session(session);
     if (collection) {
-      collection.noOfFiles -= 1;
+      collection.noOfFiles = Math.max(0, collection.noOfFiles - 1);
 
+      // Update cover photo if necessary
       if (collection.coverPhotoKey === key) {
         const nextFile = await File.findOne({ collectionSlug }).session(
           session
         );
-        collection.coverPhotoKey = nextFile ? nextFile.key : key;
+        collection.coverPhotoKey = nextFile ? nextFile.key : ""; // Fallback to null or default
       }
 
       await collection.save({ session });
 
+      // Update workspace storage
       const workspace = await Workspace.findById(
         collection.workspaceId
       ).session(session);
@@ -131,10 +155,12 @@ export const deleteFileFromCollection = async (
       }
     }
 
+    // Commit the transaction
     await session.commitTransaction();
 
     res.status(200).json({ message: "File deleted successfully" });
   } catch (error) {
+    // Rollback the transaction in case of error
     await session.abortTransaction();
     next(error);
   } finally {
