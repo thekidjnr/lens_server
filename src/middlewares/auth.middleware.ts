@@ -2,7 +2,6 @@ import { body, validationResult } from "express-validator";
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 
-// 1. Validation Chain
 export const validateRegister = [
   body("name").notEmpty().withMessage("Name is required"),
   body("email").isEmail().withMessage("Valid email is required"),
@@ -20,19 +19,19 @@ export const verifyToken = (
 
   if (!token) {
     res.status(401).json({ message: "No token provided!" });
-    return; // Ensure we stop execution here
+    return;
   }
 
   jwt.verify(token, `${process.env.JWT}`, (err, user) => {
     if (err) {
       res.status(403).json({ message: "Failed to authenticate token!" });
-      return; // Ensure we stop execution here
+      return;
     }
 
     if (user && typeof user !== "string") {
-      req.user = user as UserPayload; // Attach user payload to request
+      req.user = user as UserPayload;
     }
 
-    next(); // Pass control to the next middleware
+    next();
   });
 };

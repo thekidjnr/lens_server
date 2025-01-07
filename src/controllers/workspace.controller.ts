@@ -10,11 +10,18 @@ export const createWorkspace = async (
 ) => {
   try {
     const decodedUser = req.user as UserPayload;
-
     const { name, logo } = req.body;
 
     const sanitizedDomain = name.toLowerCase().replace(/\s+/g, "-");
     const domain = `${sanitizedDomain}.lenslyst.com`;
+
+    const existingWorkspace = await Workspace.findOne({ domain });
+
+    if (existingWorkspace) {
+      return next(
+        createError(400, "Domain is already taken. Please choose another name.")
+      );
+    }
 
     const workspace = new Workspace({
       name,

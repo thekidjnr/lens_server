@@ -14,6 +14,10 @@ export interface IWorkspace extends Document {
   storageUsed: number;
   storageLimit: number;
   deleted: boolean;
+  members: {
+    userId: mongoose.Schema.Types.ObjectId;
+    role: "admin" | "editor" | "viewer";
+  }[];
 }
 
 const workspaceSchema = new Schema<IWorkspace>(
@@ -31,9 +35,19 @@ const workspaceSchema = new Schema<IWorkspace>(
     storageLimit: {
       type: Number,
       required: true,
-      default: 2 * 1024 * 1024 * 1024,
+      default: 5 * 1024 * 1024 * 1024, // 5GB
     },
     deleted: { type: Boolean, default: false },
+    members: [
+      {
+        userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
+        role: {
+          type: String,
+          enum: ["admin", "editor", "viewer"], // Workspace-specific roles
+          required: true,
+        },
+      },
+    ],
   },
   {
     timestamps: true,

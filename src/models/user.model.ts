@@ -6,6 +6,7 @@ interface User extends Document {
   password: string;
   role: string;
   isOnboarded: boolean;
+  workspaces: { workspaceId: mongoose.Types.ObjectId; role: string }[];
 }
 
 export interface UserDocument extends User {
@@ -27,6 +28,20 @@ const userSchema = new Schema<User>({
     type: Boolean,
     default: false,
   },
+  workspaces: [
+    {
+      workspaceId: {
+        type: mongoose.Types.ObjectId,
+        ref: "Workspace",
+        required: true,
+      },
+      role: {
+        type: String,
+        enum: ["admin", "editor", "viewer"],
+        default: "editor",
+      },
+    },
+  ],
 });
 
 export const User = mongoose.model<User>("User", userSchema);
