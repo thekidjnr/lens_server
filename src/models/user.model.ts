@@ -3,6 +3,12 @@ import mongoose, { Schema, Document } from "mongoose";
 interface User extends Document {
   fullName: string;
   email: string;
+  profilePhoto: {
+    name: string;
+    url: string;
+    size: number;
+    type: string;
+  } | null;
   password: string;
   role: string;
   isOnboarded: boolean;
@@ -18,6 +24,12 @@ export interface UserDocument extends User {
 const userSchema = new Schema<User>({
   fullName: { type: String, required: true },
   email: { type: String, required: true, unique: true },
+  profilePhoto: {
+    name: { type: String, required: false },
+    url: { type: String, required: false },
+    size: { type: Number, required: false },
+    type: { type: String, required: false },
+  },
   password: { type: String, required: true },
   role: {
     type: String,

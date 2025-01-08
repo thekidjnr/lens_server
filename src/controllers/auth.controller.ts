@@ -10,35 +10,28 @@ export const registerUser = async (
   next: NextFunction
 ) => {
   try {
-    // Extract user details from the request body
     const { fullName, email, password } = req.body;
 
-    // Validate required fields
     if (!fullName || !email || !password) {
       return next(createError(400, "All fields are required."));
     }
 
-    // Check if the user already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return next(createError(400, "User with this email already exists."));
     }
 
-    // Hash the password
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    // Create a new user
     const newUser = new User({
       fullName,
       email,
       password: hashedPassword,
     });
 
-    // Save the user to the database
     await newUser.save();
 
-    // Respond with success
     res.status(201).json({
       message: "User registered successfully.",
       user: { fullName, email },

@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { Workspace } from "../models/workspace.model";
 import { User } from "../models/user.model";
 import { createError } from "../utils/error";
+import mongoose from "mongoose";
 
 export const createWorkspace = async (
   req: Request,
@@ -16,7 +17,6 @@ export const createWorkspace = async (
     const domain = `${sanitizedDomain}.lenslyst.com`;
 
     const existingWorkspace = await Workspace.findOne({ domain });
-
     if (existingWorkspace) {
       return next(
         createError(400, "Domain is already taken. Please choose another name.")
@@ -34,8 +34,20 @@ export const createWorkspace = async (
 
     const user = await User.findById(decodedUser.id);
 
-    if (user && !user.isOnboarded) {
-      user.isOnboarded = true;
+    if (user) {
+      if (!user.workspaces) {
+        user.workspaces = [];
+      }
+
+      user.workspaces.push({
+        workspaceId: workspace._id as mongoose.Types.ObjectId,
+        role: "admin",
+      });
+
+      if (!user.isOnboarded) {
+        user.isOnboarded = true;
+      }
+
       await user.save();
     }
 
@@ -48,7 +60,6 @@ export const createWorkspace = async (
   }
 };
 
-// Retrieve onboarding entry by ID
 export const getWorkspace = async (
   req: Request,
   res: Response,
