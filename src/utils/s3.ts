@@ -15,11 +15,13 @@ export const uploadToS3 = async (
   fileBuffer: Buffer,
   mimeType: string
 ) => {
+  const fileExtension = mimeType.split("/")[1];
   const command = new PutObjectCommand({
     Bucket: bucketName,
     Key: fileKey,
     Body: fileBuffer,
     ContentType: mimeType,
+    ContentDisposition: `attachment; filename="${fileKey}.${fileExtension}"`,
   });
 
   await s3Client.send(command);
