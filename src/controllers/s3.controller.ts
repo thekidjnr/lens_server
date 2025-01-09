@@ -16,7 +16,6 @@ const s3Client = new S3Client({
     accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
   },
-  logger: console,
 });
 
 const cloudFront = new CloudFrontClient({
@@ -71,32 +70,38 @@ export const deleteFileFromS3 = async (
   next: NextFunction
 ) => {
   const { key } = req.body;
+
+  if (!key) {
+    return next(createError(400, "File key is required."));
+  }
+
   try {
-    const params = {
+    // Delete file from S3
+    const deleteParams = {
       Bucket: process.env.AWS_BUCKET_NAME!,
       Key: key,
     };
+    await s3Client.send(new DeleteObjectCommand(deleteParams));
 
-    await s3Client.send(new DeleteObjectCommand(params));
-
-    // Invalidate Cloudfront Cache
+    // Invalidate CloudFront cache
     const invalidationParams = {
-      DistributionId: process.env.CLOUDFRONT_DISTRIBUTION_ID,
+      DistributionId: process.env.CLOUDFRONT_DISTRIBUTION_ID!,
       InvalidationBatch: {
-        CallerReference: key,
+        CallerReference: `${key}-${Date.now()}`,
         Paths: {
           Quantity: 1,
-          Items: ["/" + key],
+          Items: [`/${key}`],
         },
       },
     };
-
     const invalidationCommand = new CreateInvalidationCommand(
       invalidationParams
     );
-
     await cloudFront.send(invalidationCommand);
-    res.status(200).json({ message: "File deleted successfully" });
+
+    res
+      .status(200)
+      .json({ message: "File deleted and cache invalidated successfully" });
   } catch (error) {
     next(error);
   }

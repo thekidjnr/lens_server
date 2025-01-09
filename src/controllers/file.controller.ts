@@ -24,7 +24,6 @@ export const addFileToCollection = async (
       return next(createError(400, "Invalid file data"));
     }
 
-    // Check if file already exists in the collection
     const existingFile = await File.findOne({ key, collectionSlug });
     if (existingFile) {
       return next(
@@ -36,36 +35,40 @@ export const addFileToCollection = async (
     }
 
     const collection = await Collection.findOne({ slug: collectionSlug });
-
     if (!collection) {
       return next(createError(404, "Collection not found"));
     }
 
-    // Add the new file
+    const workspaceId = collection.workspaceId;
+    if (!workspaceId) {
+      return next(
+        createError(500, "Workspace ID not associated with the collection")
+      );
+    }
+
     const newFile = new File({
       name,
       key,
       size,
       type,
       collectionSlug,
+      workspaceId,
     });
 
     await newFile.save();
 
-    // Update collection atomically
     const updateFields: any = { $inc: { noOfFiles: 1 } };
-
     if (!collection.coverPhotoKey) {
       updateFields.$set = { coverPhotoKey: key };
     }
-
     await Collection.updateOne({ slug: collectionSlug }, updateFields);
 
-    // Update workspace storage used
-    const workspace = await Workspace.findById(collection.workspaceId);
+    const workspace = await Workspace.findById(workspaceId);
     if (workspace) {
       workspace.storageUsed += size;
       await workspace.save();
+    } else {
+      return next(createError(500, "Workspace not found for the collection"));
     }
 
     res.status(201).json({ file: newFile });
@@ -82,10 +85,23 @@ export const getFilesByCollection = async (
   const { slug } = req.params;
 
   try {
-    const files = await File.find({ collectionSlug: slug });
+    const collection = await Collection.findOne({ slug });
+
+    if (!collection) {
+      return next(createError(404, "Collection not found."));
+    }
+
+    const workspaceId = collection.workspaceId;
+
+    const files = await File.find({ workspaceId, collectionSlug: slug });
 
     if (!files.length) {
-      return next(createError(404, "No files found for this collection."));
+      return next(
+        createError(
+          404,
+          "No files found for this collection in the specified workspace."
+        )
+      );
     }
 
     for (const file of files) {
@@ -109,6 +125,7 @@ export const deleteFileFromCollection = async (
   next: NextFunction
 ) => {
   const { fileId } = req.params;
+  console.log(fileId);
   const session = await mongoose.startSession();
   session.startTransaction();
 
@@ -121,31 +138,27 @@ export const deleteFileFromCollection = async (
 
     const { collectionSlug, key, size } = file;
 
-    // Delete the file
     const deletedFile = await File.findByIdAndDelete(fileId).session(session);
     if (!deletedFile) {
       await session.abortTransaction();
       return next(createError(500, "Failed to delete file"));
     }
 
-    // Find the collection
     const collection = await Collection.findOne({
       slug: collectionSlug,
     }).session(session);
     if (collection) {
       collection.noOfFiles = Math.max(0, collection.noOfFiles - 1);
 
-      // Update cover photo if necessary
       if (collection.coverPhotoKey === key) {
         const nextFile = await File.findOne({ collectionSlug }).session(
           session
         );
-        collection.coverPhotoKey = nextFile ? nextFile.key : ""; // Fallback to null or default
+        collection.coverPhotoKey = nextFile ? nextFile.key : "";
       }
 
       await collection.save({ session });
 
-      // Update workspace storage
       const workspace = await Workspace.findById(
         collection.workspaceId
       ).session(session);

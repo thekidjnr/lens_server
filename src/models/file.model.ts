@@ -7,6 +7,7 @@ interface IFile extends Document {
   type: string;
   url: string;
   collectionSlug: string;
+  workspaceId: mongoose.Schema.Types.ObjectId;
 }
 
 const fileSchema = new Schema<IFile>(
@@ -17,6 +18,11 @@ const fileSchema = new Schema<IFile>(
     size: { type: Number, required: true },
     url: { type: String },
     collectionSlug: { type: String, required: true },
+    workspaceId: {
+      type: Schema.Types.ObjectId,
+      ref: "Workspace",
+      required: true,
+    },
   },
   { timestamps: true }
 );

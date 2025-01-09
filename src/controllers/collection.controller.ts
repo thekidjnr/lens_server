@@ -3,8 +3,6 @@ import { Collection } from "../models/collection.model";
 import { createError } from "../utils/error";
 import { Workspace } from "../models/workspace.model";
 import slugify from "slugify";
-import { File } from "../models/file.model";
-import { getSignedUrl } from "@aws-sdk/cloudfront-signer";
 import { generateSignedUrl } from "../utils/s3";
 
 export const createCollection = async (
