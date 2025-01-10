@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { createError } from "../utils/error";
 import path from "path";
 import { DeleteObjectCommand, S3Client } from "@aws-sdk/client-s3";
-import { uploadToS3 } from "../utils/s3";
+import { allowedMimeTypes, uploadToS3 } from "../utils/s3";
 import { File } from "../models/file.model";
 import {
   CloudFrontClient,
@@ -39,6 +39,12 @@ export const uploadFiles = async (
     const uploadedFiles = [];
 
     for (const file of files) {
+      if (!allowedMimeTypes.includes(file.mimetype)) {
+        return next(
+          createError(400, "Invalid file type. Only images are allowed.")
+        );
+      }
+
       const fileKey = `photos/${Date.now()}-${Math.round(
         Math.random() * 1e9
       )}${path.extname(file.originalname)}`;

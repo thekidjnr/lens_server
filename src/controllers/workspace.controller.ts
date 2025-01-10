@@ -60,22 +60,22 @@ export const createWorkspace = async (
   }
 };
 
-export const getWorkspace = async (
+export const getWorkspaceById = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
   try {
-    const decodedUser = req.user as UserPayload;
-    const workspace = await Workspace.find({ creatorId: decodedUser.id });
+    const { workspaceId } = req.params;
+
+    const workspace = await Workspace.findById(workspaceId);
 
     if (!workspace) {
       return next(createError(404, "Workspace not found"));
     }
 
-    res.status(200).json(workspace[0]);
+    res.status(200).json(workspace);
   } catch (error) {
-    console.error("Error fetching Workspace", error);
     next(error);
   }
 };

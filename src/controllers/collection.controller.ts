@@ -68,14 +68,6 @@ export const getCollectionsByWorkspace = async (
     if (!workspace) return next(createError(404, "Workspace not found"));
 
     const collections = await Collection.find({ workspaceId: workspace._id });
-    if (!collections.length)
-      return next(createError(404, "No Collections found for this creator."));
-
-    for (const collection of collections) {
-      if (collection.coverPhotoKey) {
-        collection.coverPhotoUrl = generateSignedUrl(collection.coverPhotoKey);
-      }
-    }
 
     res.status(200).json(collections);
   } catch (err) {
@@ -206,7 +198,9 @@ export const collectionStatus = async (
       isPublished: collection.isPublished,
     });
   } catch (error) {
-    next(error);
+    next(
+      createError(500, "An error occurred while updating collection status.")
+    );
   }
 };
 

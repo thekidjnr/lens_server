@@ -9,7 +9,6 @@ import {
   collectionStatus,
   getCollectionsByWorkspace,
 } from "../controllers/collection.controller";
-import multer from "multer"; // For file upload
 import { verifyToken } from "../middlewares/auth.middleware";
 
 const router = Router();
