@@ -125,21 +125,24 @@ export const deleteFileFromCollection = async (
   next: NextFunction
 ) => {
   const { fileId } = req.params;
-  console.log(fileId);
   const session = await mongoose.startSession();
   session.startTransaction();
 
   try {
     const file = await File.findById(fileId).session(session);
     if (!file) {
+      console.log("File was not found");
       await session.abortTransaction();
       return next(createError(404, "File not found"));
     }
 
     const { collectionSlug, key, size } = file;
 
+    console.log(file);
     const deletedFile = await File.findByIdAndDelete(fileId).session(session);
+    console.log(deletedFile);
     if (!deletedFile) {
+      console.log("file was not deleted");
       await session.abortTransaction();
       return next(createError(500, "Failed to delete file"));
     }

@@ -26,7 +26,7 @@ const workspaceSchema = new Schema<IWorkspace>(
     domain: { type: String, required: true, unique: true },
     logo: {
       name: { type: String, required: false },
-      key: { type: String, required: true },
+      key: { type: String, required: false },
       type: { type: String, required: false },
       size: { type: Number, required: false },
       url: { type: String, required: false },
