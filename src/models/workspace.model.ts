@@ -6,9 +6,10 @@ export interface IWorkspace extends Document {
   domain: string;
   logo: {
     name: string;
-    url: string;
-    size: number;
+    key: string;
     type: string;
+    size: number;
+    url: string;
   } | null;
   creatorId: mongoose.Schema.Types.ObjectId;
   storageUsed: number;
@@ -25,9 +26,10 @@ const workspaceSchema = new Schema<IWorkspace>(
     domain: { type: String, required: true, unique: true },
     logo: {
       name: { type: String, required: false },
-      url: { type: String, required: false },
-      size: { type: Number, required: false },
+      key: { type: String, required: true },
       type: { type: String, required: false },
+      size: { type: Number, required: false },
+      url: { type: String, required: false },
     },
     creatorId: { type: Schema.Types.ObjectId, ref: "User", required: true },
     storageUsed: { type: Number, default: 0 },

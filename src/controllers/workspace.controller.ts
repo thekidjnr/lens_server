@@ -3,6 +3,7 @@ import { Workspace } from "../models/workspace.model";
 import { User } from "../models/user.model";
 import { createError } from "../utils/error";
 import mongoose from "mongoose";
+import { getSignedUrl } from "@aws-sdk/cloudfront-signer";
 
 export const createWorkspace = async (
   req: Request,
@@ -12,9 +13,10 @@ export const createWorkspace = async (
   try {
     const decodedUser = req.user as UserPayload;
     const { name, logo } = req.body;
+    let { domain } = req.body;
 
-    const sanitizedDomain = name.toLowerCase().replace(/\s+/g, "-");
-    const domain = `${sanitizedDomain}.lenslyst.com`;
+    const sanitizedDomain = domain.toLowerCase().replace(/\s+/g, "-");
+    domain = `${sanitizedDomain}.lenslyst.com`;
 
     const existingWorkspace = await Workspace.findOne({ domain });
     if (existingWorkspace) {
@@ -72,6 +74,16 @@ export const getWorkspaceById = async (
 
     if (!workspace) {
       return next(createError(404, "Workspace not found"));
+    }
+
+    // If there's a logo, generate a signed URL
+    if (workspace.logo && workspace.logo.key) {
+      workspace.logo.url = getSignedUrl({
+        url: `${process.env.CLOUDFRONT_DOMAIN}/` + workspace.logo.key,
+        dateLessThan: new Date(Date.now() + 1000 * 60 * 60 * 24).toISOString(),
+        keyPairId: process.env.CLOUDFRONT_KEY_PAIR_ID!,
+        privateKey: process.env.CLOUDFRONT_PRIVATE_KEY!,
+      });
     }
 
     res.status(200).json(workspace);
