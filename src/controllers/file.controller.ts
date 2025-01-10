@@ -126,23 +126,24 @@ export const deleteFileFromCollection = async (
 ) => {
   const { fileId } = req.params;
   const session = await mongoose.startSession();
-  session.startTransaction();
 
   try {
+    session.startTransaction();
+    console.log("Transaction started");
+
     const file = await File.findById(fileId).session(session);
     if (!file) {
-      console.log("File was not found");
+      console.log("File not found");
       await session.abortTransaction();
       return next(createError(404, "File not found"));
     }
 
-    const { collectionSlug, key, size } = file;
+    console.log("File found:", file);
 
-    console.log(file);
+    const { collectionSlug, key, size } = file;
     const deletedFile = await File.findByIdAndDelete(fileId).session(session);
-    console.log(deletedFile);
     if (!deletedFile) {
-      console.log("file was not deleted");
+      console.log("Failed to delete file");
       await session.abortTransaction();
       return next(createError(500, "Failed to delete file"));
     }
@@ -151,6 +152,7 @@ export const deleteFileFromCollection = async (
       slug: collectionSlug,
     }).session(session);
     if (collection) {
+      console.log("Collection found:", collection);
       collection.noOfFiles = Math.max(0, collection.noOfFiles - 1);
 
       if (collection.coverPhotoKey === key) {
@@ -161,25 +163,29 @@ export const deleteFileFromCollection = async (
       }
 
       await collection.save({ session });
+      console.log("Collection updated");
 
       const workspace = await Workspace.findById(
         collection.workspaceId
       ).session(session);
       if (workspace) {
+        console.log("Workspace found:", workspace);
         workspace.storageUsed = Math.max(0, workspace.storageUsed - size);
         await workspace.save({ session });
+        console.log("Workspace updated");
       }
     }
 
-    // Commit the transaction
     await session.commitTransaction();
+    console.log("Transaction committed");
 
     res.status(200).json({ message: "File deleted successfully" });
   } catch (error) {
-    // Rollback the transaction in case of error
+    console.error("Transaction failed", error);
     await session.abortTransaction();
     next(error);
   } finally {
     session.endSession();
+    console.log("Session ended");
   }
 };
