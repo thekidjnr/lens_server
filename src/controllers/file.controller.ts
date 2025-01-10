@@ -125,67 +125,43 @@ export const deleteFileFromCollection = async (
   next: NextFunction
 ) => {
   const { fileId } = req.params;
-  const session = await mongoose.startSession();
 
   try {
-    session.startTransaction();
-    console.log("Transaction started");
-
-    const file = await File.findById(fileId).session(session);
+    const file = await File.findById(fileId);
     if (!file) {
-      console.log("File not found");
-      await session.abortTransaction();
       return next(createError(404, "File not found"));
     }
 
-    console.log("File found:", file);
-
     const { collectionSlug, key, size } = file;
-    const deletedFile = await File.findByIdAndDelete(fileId).session(session);
+
+    // Delete the file
+    const deletedFile = await File.findByIdAndDelete(fileId);
     if (!deletedFile) {
-      console.log("Failed to delete file");
-      await session.abortTransaction();
       return next(createError(500, "Failed to delete file"));
     }
 
-    const collection = await Collection.findOne({
-      slug: collectionSlug,
-    }).session(session);
+    // Update the collection
+    const collection = await Collection.findOne({ slug: collectionSlug });
     if (collection) {
-      console.log("Collection found:", collection);
       collection.noOfFiles = Math.max(0, collection.noOfFiles - 1);
 
       if (collection.coverPhotoKey === key) {
-        const nextFile = await File.findOne({ collectionSlug }).session(
-          session
-        );
+        const nextFile = await File.findOne({ collectionSlug });
         collection.coverPhotoKey = nextFile ? nextFile.key : "";
       }
 
-      await collection.save({ session });
-      console.log("Collection updated");
+      await collection.save();
 
-      const workspace = await Workspace.findById(
-        collection.workspaceId
-      ).session(session);
+      // Update the workspace
+      const workspace = await Workspace.findById(collection.workspaceId);
       if (workspace) {
-        console.log("Workspace found:", workspace);
         workspace.storageUsed = Math.max(0, workspace.storageUsed - size);
-        await workspace.save({ session });
-        console.log("Workspace updated");
+        await workspace.save();
       }
     }
 
-    await session.commitTransaction();
-    console.log("Transaction committed");
-
     res.status(200).json({ message: "File deleted successfully" });
   } catch (error) {
-    console.error("Transaction failed", error);
-    await session.abortTransaction();
     next(error);
-  } finally {
-    session.endSession();
-    console.log("Session ended");
   }
 };
