@@ -5,6 +5,7 @@ interface User extends Document {
   email: string;
   profilePhoto: {
     name: string;
+    key: string;
     url: string;
     size: number;
     type: string;
@@ -26,6 +27,7 @@ const userSchema = new Schema<User>({
   email: { type: String, required: true, unique: true },
   profilePhoto: {
     name: { type: String, required: false },
+    key: { type: String, required: false },
     url: { type: String, required: false },
     size: { type: Number, required: false },
     type: { type: String, required: false },

@@ -1,7 +1,5 @@
 import { Router } from "express";
 import {
-  getCollectionsByCreator,
-  getCollectionById,
   updateCollection,
   deleteCollection,
   createCollection,
@@ -17,8 +15,6 @@ const router = Router();
 router.post("/", verifyToken, createCollection);
 
 router.get("/workspace/:workspaceId", verifyToken, getCollectionsByWorkspace);
-router.get("/creator", verifyToken, getCollectionsByCreator);
-router.get("/id/:id", getCollectionById);
 router.get("/workspace/:workspaceId/slug/:slug", getCollectionBySlug);
 
 router.patch("/:slug/isPublished", collectionStatus);

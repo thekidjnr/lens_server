@@ -81,43 +81,6 @@ export const getCollectionsByWorkspace = async (
   }
 };
 
-export const getCollectionsByCreator = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  const decodedUser = req.user as UserPayload;
-
-  try {
-    const Collections = await Collection.find({ creatorId: decodedUser.id });
-    if (!Collections.length) {
-      return next(createError(404, "No Collections found for this creator."));
-    }
-
-    res.status(200).json(Collections);
-  } catch (err) {
-    next(err);
-  }
-};
-
-export const getCollectionById = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const collection = await Collection.findById(req.params.id);
-
-    if (!collection) {
-      return next(createError(404, "Collection not found."));
-    }
-
-    res.status(200).json(collection);
-  } catch (err) {
-    next(err);
-  }
-};
-
 export const getCollectionBySlug = async (
   req: Request,
   res: Response,
@@ -126,14 +89,12 @@ export const getCollectionBySlug = async (
   const { workspaceId, slug } = req.params;
 
   try {
-    // Fetch collection by slug and workspaceId
     const collection = await Collection.findOne({ slug, workspaceId });
 
     if (!collection) {
       return next(createError(404, "Collection not found."));
     }
 
-    // Add signed URL for cover photo if it exists
     const collectionData = collection.toObject();
     if (collection.coverPhotoKey) {
       collectionData.coverPhotoUrl = generateSignedUrl(

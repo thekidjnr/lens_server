@@ -38,6 +38,9 @@ export const uploadFiles = async (
     const files = req.files as unknown as Express.Multer.File[];
     const uploadedFiles = [];
 
+    // Get folder from request body (or use a default folder)
+    const folder = req.body.folder || "photos"; // Default to 'photos' if not specified
+
     for (const file of files) {
       if (!allowedMimeTypes.includes(file.mimetype)) {
         return next(
@@ -45,7 +48,8 @@ export const uploadFiles = async (
         );
       }
 
-      const fileKey = `photos/${Date.now()}-${Math.round(
+      // Dynamically set file key based on folder
+      const fileKey = `${folder}/${Date.now()}-${Math.round(
         Math.random() * 1e9
       )}${path.extname(file.originalname)}`;
 
@@ -82,14 +86,12 @@ export const deleteFileFromS3 = async (
   }
 
   try {
-    // Delete file from S3
     const deleteParams = {
       Bucket: process.env.AWS_BUCKET_NAME!,
       Key: key,
     };
     await s3Client.send(new DeleteObjectCommand(deleteParams));
 
-    // Invalidate CloudFront cache
     const invalidationParams = {
       DistributionId: process.env.CLOUDFRONT_DISTRIBUTION_ID!,
       InvalidationBatch: {
@@ -105,10 +107,9 @@ export const deleteFileFromS3 = async (
     );
     await cloudFront.send(invalidationCommand);
 
-    res
-      .status(200)
-      .json({ message: "File deleted and cache invalidated successfully" });
+    // Return a success object instead of sending a response
+    return { success: true };
   } catch (error) {
-    next(error);
+    return next(error); // Return the error to be handled by the next middleware
   }
 };

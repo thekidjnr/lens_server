@@ -5,6 +5,7 @@ import mongoose from "mongoose";
 import { Collection } from "../models/collection.model";
 import { Workspace } from "../models/workspace.model";
 import { getSignedUrl } from "@aws-sdk/cloudfront-signer";
+import { deleteFileFromS3 } from "./s3.controller";
 
 export const addFileToCollection = async (
   req: Request,
@@ -125,6 +126,7 @@ export const deleteFileFromCollection = async (
   next: NextFunction
 ) => {
   const { fileId } = req.params;
+  const { collectionSlug } = req.body;
 
   try {
     const file = await File.findById(fileId);
@@ -132,27 +134,24 @@ export const deleteFileFromCollection = async (
       return next(createError(404, "File not found"));
     }
 
-    const { collectionSlug, key, size } = file;
+    const { key, size } = file;
 
-    // Delete the file
+    await deleteFileFromS3({ body: { key } } as Request, res, next);
+
     const deletedFile = await File.findByIdAndDelete(fileId);
     if (!deletedFile) {
-      return next(createError(500, "Failed to delete file"));
+      return next(createError(500, "Failed to delete file from database"));
     }
 
-    // Update the collection
     const collection = await Collection.findOne({ slug: collectionSlug });
     if (collection) {
       collection.noOfFiles = Math.max(0, collection.noOfFiles - 1);
-
       if (collection.coverPhotoKey === key) {
         const nextFile = await File.findOne({ collectionSlug });
         collection.coverPhotoKey = nextFile ? nextFile.key : "";
       }
-
       await collection.save();
 
-      // Update the workspace
       const workspace = await Workspace.findById(collection.workspaceId);
       if (workspace) {
         workspace.storageUsed = Math.max(0, workspace.storageUsed - size);
