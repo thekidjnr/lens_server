@@ -4,6 +4,7 @@ import { User } from "../models/user.model";
 import { createError } from "../utils/error";
 import mongoose from "mongoose";
 import { getSignedUrl } from "@aws-sdk/cloudfront-signer";
+import { deleteFileFromS3 } from "./s3.controller";
 
 export const createWorkspace = async (
   req: Request,
@@ -76,7 +77,6 @@ export const getWorkspaceById = async (
       return next(createError(404, "Workspace not found"));
     }
 
-    // If there's a logo, generate a signed URL
     if (workspace.logo && workspace.logo.key) {
       workspace.logo.url = getSignedUrl({
         url: `${process.env.CLOUDFRONT_DOMAIN}/` + workspace.logo.key,
@@ -87,6 +87,55 @@ export const getWorkspaceById = async (
     }
 
     res.status(200).json(workspace);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const updateWorkspace = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const decodedUser = req.user as UserPayload;
+    if (!decodedUser || !decodedUser.id) {
+      return next(createError(401, "User not authenticated"));
+    }
+
+    const { workspaceId } = req.params;
+    const { name, logo } = req.body;
+
+    const workspace = await Workspace.findById(workspaceId);
+
+    if (!workspace) {
+      return next(createError(404, "Workspace not found."));
+    }
+
+    const user = await User.findById(decodedUser.id);
+    const isUserAdmin = user?.workspaces.some(
+      (w) => w.workspaceId.toString() === workspaceId && w.role === "admin"
+    );
+
+    if (!isUserAdmin) {
+      return next(
+        createError(403, "You do not have permission to update this workspace.")
+      );
+    }
+
+    if (workspace.logo?.key && logo) {
+      const deleteReq = { body: { key: workspace.logo.key } } as Request;
+      await deleteFileFromS3(deleteReq, res, next);
+    }
+
+    if (name) workspace.name = name;
+    if (logo) workspace.logo = logo;
+
+    await workspace.save();
+
+    res.status(200).json({
+      message: "Workspace updated successfully.",
+    });
   } catch (error) {
     next(error);
   }
