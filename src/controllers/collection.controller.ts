@@ -4,6 +4,8 @@ import { createError } from "../utils/error";
 import { Workspace } from "../models/workspace.model";
 import slugify from "slugify";
 import { generateSignedUrl } from "../utils/s3";
+import { deleteFileFromS3 } from "./s3.controller";
+import { File } from "../models/file.model";
 
 export const createCollection = async (
   req: Request,
@@ -177,13 +179,43 @@ export const deleteCollection = async (
   next: NextFunction
 ) => {
   try {
-    const deletedCollection = await Collection.findByIdAndDelete(
-      req.params.CollectionId
-    );
-    if (!deletedCollection) {
+    const { collectionId } = req.params;
+
+    const collection = await Collection.findById(collectionId);
+    if (!collection) {
       return next(createError(404, "Collection not found."));
     }
-    res.status(200).json({ message: "Collection deleted successfully." });
+
+    const files = await File.find({ collectionSlug: collection.slug });
+
+    for (const file of files) {
+      try {
+        await deleteFileFromS3(
+          { body: { key: file.key } } as Request,
+          res,
+          next
+        );
+
+        const workspace = await Workspace.findById(collection.workspaceId);
+        if (workspace) {
+          workspace.storageUsed = Math.max(
+            0,
+            workspace.storageUsed - file.size
+          );
+          await workspace.save();
+        }
+
+        await File.findByIdAndDelete(file._id);
+      } catch (err) {
+        console.error(`Error deleting file ${file._id}:`, err);
+      }
+    }
+
+    await Collection.findByIdAndDelete(collectionId);
+
+    res.status(200).json({
+      message: "Collection and associated files deleted successfully.",
+    });
   } catch (err) {
     next(err);
   }
