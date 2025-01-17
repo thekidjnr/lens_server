@@ -9,7 +9,6 @@ export interface IWorkspace extends Document {
     key: string;
     type: string;
     size: number;
-    url: string;
   } | null;
   creatorId: mongoose.Schema.Types.ObjectId;
   storageUsed: number;
@@ -29,14 +28,13 @@ const workspaceSchema = new Schema<IWorkspace>(
       key: { type: String, required: false },
       type: { type: String, required: false },
       size: { type: Number, required: false },
-      url: { type: String, required: false },
     },
     creatorId: { type: Schema.Types.ObjectId, ref: "User", required: true },
     storageUsed: { type: Number, default: 0 },
     storageLimit: {
       type: Number,
       required: true,
-      default: 5 * 1024 * 1024 * 1024, // 5GB
+      default: 5 * 1024 * 1024 * 1024,
     },
     members: [
       {

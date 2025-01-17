@@ -21,10 +21,6 @@ export const getUser = async (
       return next(createError(404, "User not found!"));
     }
 
-    if (user.profilePhoto?.key) {
-      user.profilePhoto.url = generateSignedUrl(user.profilePhoto.key);
-    }
-
     const { password, ...otherDetails } = user;
     res.status(200).json(otherDetails);
   } catch (err) {
@@ -62,7 +58,6 @@ export const updateUser = async (
 
     res.status(200).json({
       message: "User updated successfully.",
-      user: { fullName: user.fullName, profilePhoto: user.profilePhoto?.url },
     });
   } catch (error) {
     next(error);

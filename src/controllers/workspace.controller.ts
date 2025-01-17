@@ -3,7 +3,6 @@ import { Workspace } from "../models/workspace.model";
 import { User } from "../models/user.model";
 import { createError } from "../utils/error";
 import mongoose from "mongoose";
-import { getSignedUrl } from "@aws-sdk/cloudfront-signer";
 import { deleteFileFromS3 } from "./s3.controller";
 
 export const createWorkspace = async (
@@ -75,15 +74,6 @@ export const getWorkspaceById = async (
 
     if (!workspace) {
       return next(createError(404, "Workspace not found"));
-    }
-
-    if (workspace.logo && workspace.logo.key) {
-      workspace.logo.url = getSignedUrl({
-        url: `${process.env.CLOUDFRONT_DOMAIN}/` + workspace.logo.key,
-        dateLessThan: new Date(Date.now() + 1000 * 60 * 60 * 24).toISOString(),
-        keyPairId: process.env.CLOUDFRONT_KEY_PAIR_ID!,
-        privateKey: process.env.CLOUDFRONT_PRIVATE_KEY!,
-      });
     }
 
     res.status(200).json(workspace);

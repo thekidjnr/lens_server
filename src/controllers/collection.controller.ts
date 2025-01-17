@@ -71,12 +71,6 @@ export const getCollectionsByWorkspace = async (
 
     const collections = await Collection.find({ workspaceId: workspace._id });
 
-    for (let collection of collections) {
-      if (collection.coverPhotoKey) {
-        collection.coverPhotoUrl = generateSignedUrl(collection.coverPhotoKey);
-      }
-    }
-
     res.status(200).json(collections);
   } catch (err) {
     next(err);
@@ -98,11 +92,6 @@ export const getCollectionBySlug = async (
     }
 
     const collectionData = collection.toObject();
-    if (collection.coverPhotoKey) {
-      collectionData.coverPhotoUrl = generateSignedUrl(
-        collection.coverPhotoKey
-      );
-    }
 
     // Fetch workspace name
     const workspace = await Workspace.findById(workspaceId).select("name");

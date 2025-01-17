@@ -6,7 +6,6 @@ interface User extends Document {
   profilePhoto: {
     name: string;
     key: string;
-    url: string;
     size: number;
     type: string;
   } | null;
@@ -28,7 +27,6 @@ const userSchema = new Schema<User>({
   profilePhoto: {
     name: { type: String, required: false },
     key: { type: String, required: false },
-    url: { type: String, required: false },
     size: { type: Number, required: false },
     type: { type: String, required: false },
   },

@@ -105,15 +105,6 @@ export const getFilesByCollection = async (
       );
     }
 
-    for (const file of files) {
-      file.url = getSignedUrl({
-        url: `${process.env.CLOUDFRONT_DOMAIN}/` + file.key,
-        dateLessThan: new Date(Date.now() + 1000 * 60 * 60 * 24).toISOString(),
-        keyPairId: process.env.CLOUDFRONT_KEY_PAIR_ID!,
-        privateKey: process.env.CLOUDFRONT_PRIVATE_KEY!,
-      });
-    }
-
     res.status(200).json(files);
   } catch (err) {
     next(err);
