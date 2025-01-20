@@ -3,7 +3,6 @@ import { Collection } from "../models/collection.model";
 import { createError } from "../utils/error";
 import { Workspace } from "../models/workspace.model";
 import slugify from "slugify";
-import { generateSignedUrl } from "../utils/s3";
 import { deleteFileFromS3 } from "./s3.controller";
 import { File } from "../models/file.model";
 
@@ -229,28 +228,5 @@ export const deleteCollection = async (
     });
   } catch (err) {
     next(err);
-  }
-};
-
-export const updateFieldsToStrings = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    await Workspace.updateMany({}, [
-      {
-        $set: {
-          storageUsed: { $toString: "$storageUsed" },
-          storageLimit: { $toString: "$storageLimit" },
-        },
-      },
-    ]);
-
-    res.status(200).json({
-      message: "Fields successfully updated to strings.",
-    });
-  } catch (error) {
-    next(error);
   }
 };
