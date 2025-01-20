@@ -66,7 +66,11 @@ export const addFileToCollection = async (
 
     const workspace = await Workspace.findById(workspaceId);
     if (workspace) {
-      workspace.storageUsed += size;
+      const storageUsedBigInt = BigInt(workspace.storageUsed);
+      const sizeBigInt = BigInt(size);
+
+      workspace.storageUsed = (storageUsedBigInt + sizeBigInt).toString();
+
       await workspace.save();
     } else {
       return next(createError(500, "Workspace not found for the collection"));
@@ -145,7 +149,10 @@ export const deleteFileFromCollection = async (
 
       const workspace = await Workspace.findById(collection.workspaceId);
       if (workspace) {
-        workspace.storageUsed = Math.max(0, workspace.storageUsed - size);
+        workspace.storageUsed = Math.max(
+          0,
+          Number(BigInt(workspace.storageUsed) - BigInt(size))
+        ).toString();
         await workspace.save();
       }
     }

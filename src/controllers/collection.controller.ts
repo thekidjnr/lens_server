@@ -56,6 +56,45 @@ export const createCollection = async (
   }
 };
 
+export const updateCollection = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { collectionId } = req.params;
+    const updates = req.body;
+
+    const allowedUpdates = ["name", "description", "coverPhoto"];
+    const updateKeys = Object.keys(updates);
+    const isValidUpdate = updateKeys.every((key) =>
+      allowedUpdates.includes(key)
+    );
+
+    if (!isValidUpdate) {
+      return next(createError(400, "Invalid fields for update."));
+    }
+
+    const collection = await Collection.findById(collectionId);
+
+    if (!collection) {
+      return next(createError(404, "Collection not found."));
+    }
+
+    updateKeys.forEach((key) => {
+      (collection as any)[key] = updates[key];
+    });
+
+    await collection.save();
+
+    res.status(200).json({
+      message: "Collection updated successfully.",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const getCollectionsByWorkspace = async (
   req: Request,
   res: Response,
@@ -109,26 +148,6 @@ export const getCollectionBySlug = async (
     res.status(200).json(response);
   } catch (error) {
     next(error);
-  }
-};
-
-export const updateCollection = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const updatedCollection = await Collection.findByIdAndUpdate(
-      req.params.CollectionId,
-      req.body,
-      { new: true }
-    );
-    if (!updatedCollection) {
-      return next(createError(404, "Collection not found."));
-    }
-    res.status(200).json(updatedCollection);
-  } catch (err) {
-    next(err);
   }
 };
 
@@ -187,10 +206,13 @@ export const deleteCollection = async (
 
         const workspace = await Workspace.findById(collection.workspaceId);
         if (workspace) {
-          workspace.storageUsed = Math.max(
+          const currentStorageUsed = BigInt(workspace.storageUsed);
+          const newStorageUsed = Math.max(
             0,
-            workspace.storageUsed - file.size
+            Number(currentStorageUsed) - file.size
           );
+
+          workspace.storageUsed = newStorageUsed.toString();
           await workspace.save();
         }
 
@@ -207,5 +229,28 @@ export const deleteCollection = async (
     });
   } catch (err) {
     next(err);
+  }
+};
+
+export const updateFieldsToStrings = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    await Workspace.updateMany({}, [
+      {
+        $set: {
+          storageUsed: { $toString: "$storageUsed" },
+          storageLimit: { $toString: "$storageLimit" },
+        },
+      },
+    ]);
+
+    res.status(200).json({
+      message: "Fields successfully updated to strings.",
+    });
+  } catch (error) {
+    next(error);
   }
 };
