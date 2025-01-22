@@ -64,7 +64,7 @@ export const updateCollection = async (
     const { collectionId } = req.params;
     const updates = req.body;
 
-    const allowedUpdates = ["name", "description", "coverPhoto"];
+    const allowedUpdates = ["name", "description", "coverPhotoKey"];
     const updateKeys = Object.keys(updates);
     const isValidUpdate = updateKeys.every((key) =>
       allowedUpdates.includes(key)
