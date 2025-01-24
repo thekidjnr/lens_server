@@ -13,6 +13,8 @@ interface User extends Document {
   role: string;
   isOnboarded: boolean;
   workspaces: { workspaceId: mongoose.Types.ObjectId; role: string }[];
+  resetPasswordCode: string | null;
+  resetPasswordCodeExpires: number | null;
 }
 
 export interface UserDocument extends User {
@@ -54,6 +56,8 @@ const userSchema = new Schema<User>({
       },
     },
   ],
+  resetPasswordCode: { type: String },
+  resetPasswordCodeExpires: { type: Number },
 });
 
 export const User = mongoose.model<User>("User", userSchema);
