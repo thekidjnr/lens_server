@@ -1,7 +1,5 @@
 import express, { Express, ErrorRequestHandler } from "express";
 
-import { APIGatewayEvent, Context, Callback } from "aws-lambda";
-import serverlessExpress from "aws-serverless-express";
 import cors, { CorsOptions } from "cors";
 import { createServer } from "http";
 import dotenv from "dotenv";

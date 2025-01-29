@@ -1,7 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { User } from "../models/user.model";
 import { createError } from "../utils/error";
-import { generateSignedUrl } from "../utils/s3";
 import { deleteFileFromS3 } from "./s3.controller";
 import bcrypt from "bcryptjs";
 

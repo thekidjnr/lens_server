@@ -92,24 +92,8 @@ export const deleteFileFromS3 = async (
     };
     await s3Client.send(new DeleteObjectCommand(deleteParams));
 
-    // const invalidationParams = {
-    //   DistributionId: process.env.CLOUDFRONT_DISTRIBUTION_ID!,
-    //   InvalidationBatch: {
-    //     CallerReference: `${key}-${Date.now()}`,
-    //     Paths: {
-    //       Quantity: 1,
-    //       Items: [`/${key}`],
-    //     },
-    //   },
-    // };
-    // const invalidationCommand = new CreateInvalidationCommand(
-    //   invalidationParams
-    // );
-    // await cloudFront.send(invalidationCommand);
-
-    // Return a success object instead of sending a response
     return { success: true };
   } catch (error) {
-    return next(error); // Return the error to be handled by the next middleware
+    return next(error);
   }
 };

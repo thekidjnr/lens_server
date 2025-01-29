@@ -4,7 +4,6 @@ import { createError } from "../utils/error";
 import { User } from "../models/user.model";
 import jwt from "jsonwebtoken";
 import nodemailer from "nodemailer";
-import crypto from "crypto";
 
 export const registerUser = async (
   req: Request,
