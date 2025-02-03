@@ -4,6 +4,7 @@ import { User } from "../models/user.model";
 import { createError } from "../utils/error";
 import mongoose from "mongoose";
 import { deleteFileFromS3 } from "./s3.controller";
+import { WorkspaceResponse } from "../types/custom";
 
 export const createWorkspace = async (
   req: Request,
@@ -130,3 +131,4 @@ export const updateWorkspace = async (
     next(error);
   }
 };
+

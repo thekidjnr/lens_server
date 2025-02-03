@@ -50,7 +50,7 @@ export const loginUser = async (
   try {
     const { email, password } = req.body;
 
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email })
     if (!user) return next(createError(404, "User does not exist"));
 
     const isPasswordCorrect = await bcrypt.compare(password, user.password);
@@ -59,13 +59,13 @@ export const loginUser = async (
 
     const token = jwt.sign(
       { id: user._id, role: user.role },
-      `${process.env.JWT}`,
+      `${process.env.JWT_SECRET}`,
       {
         expiresIn: "1y",
       }
     );
 
-    res.status(200).json({ token });
+    res.status(200).json({ token, subdomain: "mikestudios" });
   } catch (err) {
     next(err);
   }

@@ -22,7 +22,7 @@ export const verifyToken = (
     return;
   }
 
-  jwt.verify(token, `${process.env.JWT}`, (err, user) => {
+  jwt.verify(token, `${process.env.JWT_SECRET}`, (err, user) => {
     if (err) {
       res.status(403).json({ message: "Failed to authenticate token!" });
       return;
