@@ -13,6 +13,7 @@ export interface IWorkspace extends Document {
   creatorId: mongoose.Schema.Types.ObjectId;
   storageUsed: string;
   storageLimit: string;
+  pricingPlan: "free" | "standard" | "premium";
   members: {
     userId: mongoose.Schema.Types.ObjectId;
     role: "admin" | "editor" | "viewer";
@@ -35,6 +36,12 @@ const workspaceSchema = new Schema<IWorkspace>(
       type: String,
       required: true,
       default: "5368709120",
+    },
+    pricingPlan: {
+      type: String,
+      enum: ["free", "standard", "premium"],
+      required: true,
+      default: "free", // Default to "free" for new workspaces
     },
     members: [
       {

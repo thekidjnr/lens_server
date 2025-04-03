@@ -3,11 +3,7 @@ import { createError } from "../utils/error";
 import path from "path";
 import { DeleteObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { allowedMimeTypes, uploadToS3 } from "../utils/s3";
-import { File } from "../models/file.model";
-import {
-  CloudFrontClient,
-  CreateInvalidationCommand,
-} from "@aws-sdk/client-cloudfront";
+import { CloudFrontClient } from "@aws-sdk/client-cloudfront";
 
 // Initialize the AWS S3 client
 const s3Client = new S3Client({
