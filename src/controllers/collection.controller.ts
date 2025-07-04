@@ -36,15 +36,12 @@ export const createCollection = async (
       );
     }
 
-    const url = `${process.env.CLIENT_URL}/photos/${workspace._id}/${slug}`;
-
     const newCollection = new Collection({
       name,
       slug,
       description,
       workspaceId,
       creatorId: decodedUser.id,
-      url,
     });
 
     await newCollection.save();
@@ -120,10 +117,22 @@ export const getCollectionBySlug = async (
   res: Response,
   next: NextFunction
 ) => {
-  const { workspaceId, slug } = req.params;
+  const { workspaceSlug, slug } = req.params;
 
   try {
-    const collection = await Collection.findOne({ slug, workspaceId });
+    // Find workspace by slug
+    const workspace = await Workspace.findOne({ slug: workspaceSlug }).select(
+      "_id slug name"
+    );
+    if (!workspace) {
+      return next(createError(404, "Workspace not found."));
+    }
+
+    // Find collection by slug and workspaceId
+    const collection = await Collection.findOne({
+      slug,
+      workspaceId: workspace._id,
+    });
 
     if (!collection) {
       return next(createError(404, "Collection not found."));
@@ -131,19 +140,15 @@ export const getCollectionBySlug = async (
 
     const collectionData = collection.toObject();
 
-    // Fetch workspace name
-    const workspace = await Workspace.findById(workspaceId).select("name");
+    const url = `${process.env.CLIENT_URL}/photos/${workspace.slug}/${slug}`;
 
-    if (!workspace) {
-      return next(createError(404, "Workspace not found."));
-    }
-
-    // Combine collection data with workspace name
     const response = {
       ...collectionData,
+      url,
       workspaceName: workspace.name,
     };
 
+    console.log(response);
     res.status(200).json(response);
   } catch (error) {
     next(error);

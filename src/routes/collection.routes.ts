@@ -15,7 +15,7 @@ const router = Router();
 router.post("/", verifyToken, createCollection);
 
 router.get("/workspace/:workspaceId", verifyToken, getCollectionsByWorkspace);
-router.get("/workspace/:workspaceId/slug/:slug", getCollectionBySlug);
+router.get("/workspace/:workspaceSlug/slug/:slug", getCollectionBySlug);
 
 router.patch("/:slug/isPublished", collectionStatus);
 router.put("/:collectionId", updateCollection);

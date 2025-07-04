@@ -12,34 +12,36 @@ export const createWorkspace = async (
 ) => {
   try {
     const decodedUser = req.user as UserPayload;
-    const { name, logo } = req.body;
-    let { domain } = req.body;
+    const { name, logo, slug } = req.body;
 
-    const sanitizedDomain = domain.toLowerCase().replace(/\s+/g, "-");
-    domain = `${sanitizedDomain}.lenslyst.com`;
+    if (!slug || !name) {
+      return next(createError(400, "Name and slug are required."));
+    }
 
-    const existingWorkspace = await Workspace.findOne({ domain });
+    // Sanitize and validate slug
+    const sanitizedSlug = slug.toLowerCase().replace(/\s+/g, "-");
+
+    const existingWorkspace = await Workspace.findOne({ slug: sanitizedSlug });
     if (existingWorkspace) {
       return next(
-        createError(400, "Domain is already taken. Please choose another name.")
+        createError(400, "That workspace name is taken. Try another.")
       );
     }
 
+    // Create new workspace
     const workspace = new Workspace({
       name,
-      domain,
+      slug: sanitizedSlug,
       logo,
       creatorId: decodedUser.id,
     });
 
     await workspace.save();
 
+    // Add workspace to user
     const user = await User.findById(decodedUser.id);
-
     if (user) {
-      if (!user.workspaces) {
-        user.workspaces = [];
-      }
+      if (!user.workspaces) user.workspaces = [];
 
       user.workspaces.push({
         workspaceId: workspace._id as mongoose.Types.ObjectId,
@@ -57,6 +59,41 @@ export const createWorkspace = async (
       message: "Workspace created successfully",
       workspace,
     });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getWorkspaceBySlug = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const decodedUser = req.user as UserPayload;
+
+    if (!decodedUser?.id) {
+      return next(createError(401, "User not authenticated"));
+    }
+
+    const { slug } = req.params;
+
+    const workspace = await Workspace.findOne({ slug });
+
+    if (!workspace) {
+      return next(createError(404, "Workspace not found"));
+    }
+
+    const isCreator = workspace.creatorId.toString() === decodedUser.id;
+    const isMember = workspace.members.some(
+      (member) => member.userId.toString() === decodedUser.id
+    );
+
+    if (!isCreator && !isMember) {
+      return next(createError(403, "Access denied: not a workspace member"));
+    }
+
+    res.status(200).json(workspace);
   } catch (error) {
     next(error);
   }
@@ -128,5 +165,70 @@ export const updateWorkspace = async (
     });
   } catch (error) {
     next(error);
+  }
+};
+
+export const updateWorkspaceSlug = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const workspaces = await Workspace.find({
+      domain: { $exists: true, $ne: null },
+    });
+
+    let updatedCount = 0;
+    let skipped = 0;
+
+    for (const ws of workspaces) {
+      const domain = ws.domain;
+
+      if (typeof domain === "string" && domain.endsWith(".lenslyst.com")) {
+        const proposedSlug = domain.replace(".lenslyst.com", "").toLowerCase();
+
+        // Skip if slug already exists on this doc
+        if (ws.slug === proposedSlug) {
+          console.log(`✅ Already has slug: ${proposedSlug}`);
+          skipped++;
+          continue;
+        }
+
+        // Skip if another workspace already has the same slug
+        const existing = await Workspace.findOne({
+          slug: proposedSlug,
+          _id: { $ne: ws._id },
+        });
+
+        if (existing) {
+          console.warn(`⚠️ Slug "${proposedSlug}" already exists. Skipping.`);
+          skipped++;
+          continue;
+        }
+
+        await Workspace.updateOne(
+          { _id: ws._id },
+          {
+            $set: { slug: proposedSlug },
+          }
+        );
+
+        console.log(`✅ Set slug "${proposedSlug}" for ${domain}`);
+        updatedCount++;
+      } else {
+        console.warn(`⚠️ Invalid or missing domain for workspace: ${ws._id}`);
+        skipped++;
+      }
+    }
+
+    res.json({
+      message: "✅ Slug creation complete",
+      updated: updatedCount,
+      skipped,
+      total: workspaces.length,
+    });
+  } catch (err) {
+    console.error("❌ Error creating slugs", err);
+    next(err);
   }
 };

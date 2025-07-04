@@ -3,6 +3,7 @@ import mongoose, { Schema, Document } from "mongoose";
 // Interface for Workspace
 export interface IWorkspace extends Document {
   name: string;
+  slug: string;
   domain: string;
   logo: {
     name: string;
@@ -23,7 +24,8 @@ export interface IWorkspace extends Document {
 const workspaceSchema = new Schema<IWorkspace>(
   {
     name: { type: String, required: true },
-    domain: { type: String, required: true, unique: true },
+    slug: { type: String, required: true },
+    domain: { type: String },
     logo: {
       name: { type: String, required: false },
       key: { type: String, required: false },
