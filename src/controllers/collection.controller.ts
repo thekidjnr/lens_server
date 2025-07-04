@@ -140,7 +140,7 @@ export const getCollectionBySlug = async (
 
     const collectionData = collection.toObject();
 
-    const url = `${process.env.CLIENT_URL}/photos/${workspace.slug}/${slug}`;
+    const url = `${process.env.PREVIEW_URL}/${workspace.slug}/${slug}`;
 
     const response = {
       ...collectionData,
