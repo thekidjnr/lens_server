@@ -35,11 +35,11 @@ export const uploadToS3 = async (
   return fileKey;
 };
 
-export const generateSignedUrl = (key: string) => {
-  return getSignedUrl({
-    url: `${process.env.CLOUDFRONT_DOMAIN}/${key}`,
-    dateLessThan: new Date(Date.now() + 1000 * 60 * 60 * 24).toISOString(),
-    keyPairId: process.env.CLOUDFRONT_KEY_PAIR_ID!,
-    privateKey: process.env.CLOUDFRONT_PRIVATE_KEY!,
-  });
-};
+// export const generateSignedUrl = (key: string) => {
+//   return getSignedUrl({
+//     url: `${process.env.CLOUDFRONT_DOMAIN}/${key}`,
+//     dateLessThan: new Date(Date.now() + 1000 * 60 * 60 * 24).toISOString(),
+//     keyPairId: process.env.CLOUDFRONT_KEY_PAIR_ID!,
+//     privateKey: process.env.CLOUDFRONT_PRIVATE_KEY!,
+//   });
+// };

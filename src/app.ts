@@ -39,7 +39,11 @@ app.use(cookieParser());
 
 // CORS POLICIES
 const corsOptions: CorsOptions = {
-  origin: ["https://www.lenslyst.com", "http://localhost:3000"],
+  origin: [
+    "https://www.lenslyst.com",
+    "https://dashboard.lenslyst.com",
+    "http://localhost:3000",
+  ],
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   credentials: true,
   exposedHeaders: ["Set-Cookie", "Date", "ETag"],
