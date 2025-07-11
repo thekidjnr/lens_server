@@ -122,7 +122,7 @@ export const getCollectionBySlug = async (
   try {
     // Find workspace by slug
     const workspace = await Workspace.findOne({ slug: workspaceSlug }).select(
-      "_id slug name"
+      "_id slug name logo"
     );
     if (!workspace) {
       return next(createError(404, "Workspace not found."));
@@ -145,6 +145,7 @@ export const getCollectionBySlug = async (
     const response = {
       ...collectionData,
       url,
+      workspaceLogo: workspace.logo,
       workspaceName: workspace.name,
     };
 
