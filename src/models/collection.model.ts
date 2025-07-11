@@ -10,6 +10,7 @@ interface ICollection extends Document {
   noOfFiles: number;
   isPublished: boolean;
   coverPhotoKey: string;
+  template: string;
   createdAt: Date;
 }
 
@@ -29,6 +30,11 @@ const collectionSchema = new Schema<ICollection>({
   noOfFiles: { type: Number, default: 0 },
   isPublished: { type: Boolean, default: false },
   url: { type: String },
+  template: {
+    type: String,
+    enum: ["classic", "lumen", "zest", "muse"],
+    default: "classic",
+  },
   createdAt: { type: Date, default: Date.now },
 });
 
