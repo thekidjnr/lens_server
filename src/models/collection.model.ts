@@ -12,6 +12,16 @@ interface ICollection extends Document {
   coverPhotoKey: string;
   template: string;
   createdAt: Date;
+  requiresPayment: boolean;
+  watermarkingProgress: {
+    totalFiles: number;
+    watermarkedFiles: number;
+    status: "idle" | "pending" | "in_progress" | "completed" | "failed";
+    lastUpdated: Date;
+  };
+  isWatermarkingLocked: boolean;
+  watermarkConfigId: mongoose.Schema.Types.ObjectId;
+  watermarked: boolean;
 }
 
 const collectionSchema = new Schema<ICollection>({
@@ -36,6 +46,24 @@ const collectionSchema = new Schema<ICollection>({
     default: "classic",
   },
   createdAt: { type: Date, default: Date.now },
+  requiresPayment: { type: Boolean, default: false },
+  watermarkingProgress: {
+    totalFiles: { type: Number, default: 0 },
+    watermarkedFiles: { type: Number, default: 0 },
+    status: {
+      type: String,
+      enum: ["idle", "pending", "in_progress", "completed", "failed"],
+      default: "idle",
+    },
+    lastUpdated: { type: Date, default: Date.now },
+  },
+  isWatermarkingLocked: { type: Boolean, default: false },
+  watermarkConfigId: {
+    type: Schema.Types.ObjectId,
+    ref: "WatermarkConfig",
+    default: null,
+  },
+  watermarked: { type: Boolean, default: false },
 });
 
 collectionSchema.index({ slug: 1, workspaceId: 1 }, { unique: true });

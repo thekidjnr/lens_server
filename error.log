@@ -1,0 +1,12 @@
+[2025-07-13T04:55:05.487Z] [31merror[39m: 400 - Invalid file type. Only images are allowed.
+[2025-07-13T04:56:59.197Z] [31merror[39m: 400 - Invalid file type. Only images are allowed.
+[2025-07-13T04:57:55.670Z] [31merror[39m: 500 - WatermarkConfig validation failed: size: Path `size` (30) is more than maximum allowed value (1)., previewMode: `all` is not a valid enum value for path `previewMode`.
+[2025-07-13T05:00:01.599Z] [31merror[39m: 500 - WatermarkConfig validation failed: previewMode: `all` is not a valid enum value for path `previewMode`.
+[2025-07-13T08:43:40.752Z] [31merror[39m: 400 - Expected ',' or '}' after property value in JSON at position 81 (line 4 column 19)
+[2025-07-13T08:44:02.056Z] [31merror[39m: 400 - Expected ',' or '}' after property value in JSON at position 81 (line 4 column 19)
+[2025-07-13T08:44:13.022Z] [31merror[39m: 400 - Expected ',' or '}' after property value in JSON at position 81 (line 4 column 19)
+[2025-07-13T08:44:56.976Z] [31merror[39m: 400 - Expected ',' or '}' after property value in JSON at position 81 (line 4 column 19)
+[2025-07-13T08:45:03.652Z] [31merror[39m: 400 - Expected ',' or '}' after property value in JSON at position 81 (line 4 column 19)
+[2025-07-13T08:45:28.370Z] [31merror[39m: 400 - Expected ',' or '}' after property value in JSON at position 81 (line 4 column 19)
+[2025-07-13T08:57:51.141Z] [31merror[39m: 500 - Cast to ObjectId failed for value "{collectionId}" (type string) at path "_id" for model "Collection"
+[2025-07-13T09:07:16.918Z] [31merror[39m: 500 - Operation `collections.findOne()` buffering timed out after 10000ms

@@ -5,14 +5,35 @@ import { createServer } from "http";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
 import cookieParser from "cookie-parser";
+import { apiReference } from "@scalar/express-api-reference";
+import winston from "winston";
 dotenv.config();
+import "./utils/watermarkProcessor";
 
+// Import routes
 import authRoute from "./routes/auth.routes";
 import userRoute from "./routes/user.routes";
 import collectionRoute from "./routes/collection.routes";
 import fileRoute from "./routes/file.routes";
 import workspaceRoute from "./routes/workspace.routes";
 import s3Route from "./routes/s3.routes";
+
+// Configure logger
+const logger = winston.createLogger({
+  level: "info",
+  format: winston.format.combine(
+    winston.format.timestamp(),
+    winston.format.colorize(),
+    winston.format.printf(({ timestamp, level, message }) => {
+      return `[${timestamp}] ${level}: ${message}`;
+    })
+  ),
+  transports: [
+    new winston.transports.Console(),
+    new winston.transports.File({ filename: "error.log", level: "error" }),
+    new winston.transports.File({ filename: "combined.log" }),
+  ],
+});
 
 const app: Express = express();
 const httpServer = createServer(app);
@@ -23,14 +44,15 @@ const connect = async () => {
   const mongoUri = process.env.MONGO_URI!;
   try {
     await mongoose.connect(mongoUri);
-    console.log("Connected to MongoDB");
+    logger.info("Connected to MongoDB");
   } catch (err) {
+    logger.error("MongoDB connection error:", err);
     throw err;
   }
 };
 
 mongoose.connection.on("disconnected", () => {
-  console.log("MongoDB Disconnected");
+  logger.warn("MongoDB Disconnected");
 });
 
 //MIDDLEWARES
@@ -64,10 +86,26 @@ app.use("/collections", collectionRoute);
 app.use("/files", fileRoute);
 app.use("/s3", s3Route);
 
+// Serve the OpenAPI spec
+app.get("/api-spec.json", (req, res) => {
+  res.sendFile("api-spec.json", { root: "./public" });
+});
+
+// API reference route
+app.use(
+  "/api-docs",
+  apiReference({
+    theme: "purple",
+    url: "/api-spec.json",
+  })
+);
+
 //ERROR HANDLERS
 const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
   const errorStatus = err.status || 500;
   const errorMessage = err.message || "Something went wrong";
+
+  logger.error(`${errorStatus} - ${errorMessage}`, { stack: err.stack });
 
   res.status(errorStatus).json({
     success: false,
@@ -81,7 +119,7 @@ const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
 app.use(errorHandler);
 
 //PORT FOR LISTENING TO APP
-httpServer.listen(`${process.env.PORT}`, () => {
+httpServer.listen(parseInt(process.env.PORT as string), () => {
   connect();
-  console.log(`Server is running on ${process.env.PORT}`);
+  logger.info(`Server is running on port ${process.env.PORT}`);
 });

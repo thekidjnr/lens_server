@@ -6,6 +6,9 @@ import {
   getCollectionBySlug,
   collectionStatus,
   getCollectionsByWorkspace,
+  generateWatermark,
+  getWatermarkingProgress,
+  getCollectionById,
 } from "../controllers/collection.controller";
 import { verifyToken } from "../middlewares/auth.middleware";
 
@@ -22,4 +25,14 @@ router.put("/:collectionId", updateCollection);
 
 router.delete("/:collectionId", deleteCollection);
 
+// Watermark generation route
+router.post("/:collectionId/watermark", verifyToken, generateWatermark);
+
+// Add this route with your other routes
+router.get(
+  "/:collectionId/watermarking-progress",
+  verifyToken,
+  getWatermarkingProgress
+);
+router.get("/:collectionId", verifyToken, getCollectionById);
 export default router;

@@ -3,6 +3,8 @@ import { getSignedUrl } from "@aws-sdk/cloudfront-signer";
 
 export const allowedMimeTypes = [
   "image/jpeg",
+  "image/jpg",
+  "image/JPG",
   "image/png",
   "image/gif",
   "image/webp",

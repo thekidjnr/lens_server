@@ -1,0 +1,51 @@
+[2025-07-13T04:45:43.146Z] [32minfo[39m: Server is running on port 6500
+[2025-07-13T04:45:45.291Z] [32minfo[39m: Connected to MongoDB
+[2025-07-13T04:55:05.487Z] [31merror[39m: 400 - Invalid file type. Only images are allowed.
+[2025-07-13T04:56:59.197Z] [31merror[39m: 400 - Invalid file type. Only images are allowed.
+[2025-07-13T04:57:21.149Z] [32minfo[39m: Server is running on port 6500
+[2025-07-13T04:57:23.185Z] [32minfo[39m: Connected to MongoDB
+[2025-07-13T04:57:55.670Z] [31merror[39m: 500 - WatermarkConfig validation failed: size: Path `size` (30) is more than maximum allowed value (1)., previewMode: `all` is not a valid enum value for path `previewMode`.
+[2025-07-13T05:00:01.599Z] [31merror[39m: 500 - WatermarkConfig validation failed: previewMode: `all` is not a valid enum value for path `previewMode`.
+[2025-07-13T05:09:29.746Z] [32minfo[39m: Server is running on port 6500
+[2025-07-13T05:09:31.623Z] [32minfo[39m: Connected to MongoDB
+[2025-07-13T08:11:45.242Z] [32minfo[39m: Server is running on port 6500
+[2025-07-13T08:11:51.569Z] [32minfo[39m: Connected to MongoDB
+[2025-07-13T08:13:29.021Z] [32minfo[39m: Server is running on port 6500
+[2025-07-13T08:13:38.332Z] [32minfo[39m: Server is running on port 6500
+[2025-07-13T08:13:40.260Z] [32minfo[39m: Connected to MongoDB
+[2025-07-13T08:13:51.246Z] [32minfo[39m: Server is running on port 6500
+[2025-07-13T08:13:52.978Z] [32minfo[39m: Connected to MongoDB
+[2025-07-13T08:17:58.863Z] [32minfo[39m: Server is running on port 6500
+[2025-07-13T08:18:01.886Z] [32minfo[39m: Connected to MongoDB
+[2025-07-13T08:19:26.300Z] [32minfo[39m: Server is running on port 6500
+[2025-07-13T08:19:28.174Z] [32minfo[39m: Connected to MongoDB
+[2025-07-13T08:24:20.031Z] [32minfo[39m: Server is running on port 6500
+[2025-07-13T08:24:22.483Z] [32minfo[39m: Connected to MongoDB
+[2025-07-13T08:26:30.278Z] [32minfo[39m: Server is running on port 6500
+[2025-07-13T08:26:34.644Z] [32minfo[39m: Connected to MongoDB
+[2025-07-13T08:27:01.135Z] [32minfo[39m: Server is running on port 6500
+[2025-07-13T08:27:03.746Z] [32minfo[39m: Connected to MongoDB
+[2025-07-13T08:31:10.041Z] [32minfo[39m: Server is running on port 6500
+[2025-07-13T08:31:11.955Z] [32minfo[39m: Connected to MongoDB
+[2025-07-13T08:32:09.978Z] [32minfo[39m: Server is running on port 6500
+[2025-07-13T08:32:11.851Z] [32minfo[39m: Connected to MongoDB
+[2025-07-13T08:43:40.752Z] [31merror[39m: 400 - Expected ',' or '}' after property value in JSON at position 81 (line 4 column 19)
+[2025-07-13T08:44:02.056Z] [31merror[39m: 400 - Expected ',' or '}' after property value in JSON at position 81 (line 4 column 19)
+[2025-07-13T08:44:13.022Z] [31merror[39m: 400 - Expected ',' or '}' after property value in JSON at position 81 (line 4 column 19)
+[2025-07-13T08:44:56.976Z] [31merror[39m: 400 - Expected ',' or '}' after property value in JSON at position 81 (line 4 column 19)
+[2025-07-13T08:45:03.652Z] [31merror[39m: 400 - Expected ',' or '}' after property value in JSON at position 81 (line 4 column 19)
+[2025-07-13T08:45:28.370Z] [31merror[39m: 400 - Expected ',' or '}' after property value in JSON at position 81 (line 4 column 19)
+[2025-07-13T08:56:02.190Z] [32minfo[39m: Server is running on port 6500
+[2025-07-13T08:56:10.145Z] [32minfo[39m: Connected to MongoDB
+[2025-07-13T08:56:45.029Z] [32minfo[39m: Server is running on port 6500
+[2025-07-13T08:56:48.974Z] [32minfo[39m: Connected to MongoDB
+[2025-07-13T08:57:51.141Z] [31merror[39m: 500 - Cast to ObjectId failed for value "{collectionId}" (type string) at path "_id" for model "Collection"
+[2025-07-13T09:01:45.448Z] [32minfo[39m: Server is running on port 6500
+[2025-07-13T09:01:49.644Z] [32minfo[39m: Connected to MongoDB
+[2025-07-13T09:02:17.935Z] [32minfo[39m: Server is running on port 6500
+[2025-07-13T09:02:21.723Z] [32minfo[39m: Connected to MongoDB
+[2025-07-13T09:05:45.223Z] [32minfo[39m: Server is running on port 6500
+[2025-07-13T09:05:49.332Z] [32minfo[39m: Connected to MongoDB
+[2025-07-13T09:07:03.113Z] [32minfo[39m: Server is running on port 6500
+[2025-07-13T09:07:16.918Z] [31merror[39m: 500 - Operation `collections.findOne()` buffering timed out after 10000ms
+[2025-07-13T09:07:20.195Z] [32minfo[39m: Connected to MongoDB
