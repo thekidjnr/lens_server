@@ -626,3 +626,37 @@
 {"level":"info","message":"Redis client is ready","timestamp":"2025-07-16 17:09:00"}
 {"level":"info","message":"Connected to MongoDB","timestamp":"2025-07-16 17:09:02"}
 {"level":"info","message":{"__v":0,"_id":"68736f317430e5cb4b14efe6","coverPhotoKey":"photos/1752395569881-527821718.jpeg","createdAt":"2025-07-13T08:32:49.662Z","creatorId":"678537c9492047c21fb312a7","description":"Test Description","isPublished":false,"isWatermarkingLocked":false,"name":"Collection_4rqwec_9022","noOfFiles":2,"requiresPayment":false,"slug":"collection4rqwec9022","template":"classic","watermarkConfig":{"alignment":"center","amount":0,"createdAt":"2025-07-16T16:21:20.743Z","opacity":0.5,"previewMode":"watermarked","requirePayment":false,"rotation":0,"size":0.8,"text":"Lenslyst","textColor":"#ffffff","tileType":"single","type":"text","updatedAt":"2025-07-16T16:21:20.743Z"},"watermarkConfigId":"68736f317430e5cb4b14efe4","watermarkProgress":{"locked":false,"status":"completed","total":2,"watermarked":2},"watermarked":true,"watermarkedFiles":[{"__v":0,"_id":"6877d1870ddf0a9f827c6185","collectionId":"68736f317430e5cb4b14efe6","createdAt":"2025-07-16T16:21:27.933Z","key":"watermarked-68736f317430e5cb4b14efe6/1752395569881-527821718.jpeg","name":"1752395569881-527821718.jpeg","originalFileId":"68736f4f7430e5cb4b14efea","size":3333673,"type":"image/jpeg","updatedAt":"2025-07-16T16:21:27.933Z","workspaceId":"678537dc492047c21fb312ac"},{"__v":0,"_id":"6877d18d0ddf0a9f827c6189","collectionId":"68736f317430e5cb4b14efe6","createdAt":"2025-07-16T16:21:33.083Z","key":"watermarked-68736f317430e5cb4b14efe6/1752395600541-896407334.jpg","name":"1752395600541-896407334.jpg","originalFileId":"68736f567430e5cb4b14eff1","size":2190863,"type":"image/jpg","updatedAt":"2025-07-16T16:21:33.083Z","workspaceId":"678537dc492047c21fb312ac"}],"watermarkingProgress":{"lastUpdated":"2025-07-13T08:33:33.315Z","status":"failed","totalFiles":2,"watermarkedFiles":0},"workspaceId":"678537dc492047c21fb312ac"},"timestamp":"2025-07-16 17:09:08"}
+{"level":"info","message":"Retrying Redis connection (attempt 1) after 100ms","timestamp":"2025-07-16 17:19:00"}
+{"level":"info","message":"Successfully connected to Redis","timestamp":"2025-07-16 17:19:00"}
+{"level":"info","message":"Redis client is ready","timestamp":"2025-07-16 17:19:01"}
+{"level":"info","message":"Retrying Redis connection (attempt 1) after 100ms","timestamp":"2025-07-16 17:29:01"}
+{"level":"info","message":"Successfully connected to Redis","timestamp":"2025-07-16 17:29:01"}
+{"level":"info","message":"Redis client is ready","timestamp":"2025-07-16 17:29:01"}
+{"level":"info","message":"Retrying Redis connection (attempt 1) after 100ms","timestamp":"2025-07-16 17:39:01"}
+{"level":"info","message":"Successfully connected to Redis","timestamp":"2025-07-16 17:39:01"}
+{"level":"info","message":"Redis client is ready","timestamp":"2025-07-16 17:39:01"}
+{"level":"info","message":"Retrying Redis connection (attempt 1) after 100ms","timestamp":"2025-07-16 17:49:01"}
+{"level":"info","message":"Successfully connected to Redis","timestamp":"2025-07-16 17:49:03"}
+{"level":"info","message":"Redis client is ready","timestamp":"2025-07-16 17:49:04"}
+{"level":"info","message":"Retrying Redis connection (attempt 1) after 100ms","timestamp":"2025-07-16 17:59:05"}
+{"level":"info","message":"Successfully connected to Redis","timestamp":"2025-07-16 17:59:05"}
+{"level":"info","message":"Redis client is ready","timestamp":"2025-07-16 17:59:05"}
+{"level":"info","message":"Retrying Redis connection (attempt 1) after 100ms","timestamp":"2025-07-16 18:09:05"}
+{"level":"info","message":"Successfully connected to Redis","timestamp":"2025-07-16 18:09:05"}
+{"level":"info","message":"Redis client is ready","timestamp":"2025-07-16 18:09:05"}
+{"level":"info","message":"Retrying Redis connection (attempt 1) after 100ms","timestamp":"2025-07-16 18:19:05"}
+{"level":"info","message":"Successfully connected to Redis","timestamp":"2025-07-16 18:19:06"}
+{"level":"info","message":"Redis client is ready","timestamp":"2025-07-16 18:19:06"}
+{"level":"info","message":"Retrying Redis connection (attempt 1) after 100ms","timestamp":"2025-07-16 18:29:06"}
+{"level":"info","message":"Successfully connected to Redis","timestamp":"2025-07-16 18:29:06"}
+{"level":"info","message":"Redis client is ready","timestamp":"2025-07-16 18:29:06"}
+{"level":"info","message":"Retrying Redis connection (attempt 1) after 100ms","timestamp":"2025-07-16 18:39:06"}
+{"level":"info","message":"Successfully connected to Redis","timestamp":"2025-07-16 18:39:07"}
+{"level":"info","message":"Redis client is ready","timestamp":"2025-07-16 18:39:07"}
+{"level":"info","message":"Retrying Redis connection (attempt 1) after 100ms","timestamp":"2025-07-16 18:49:07"}
+{"level":"info","message":"Successfully connected to Redis","timestamp":"2025-07-16 18:49:07"}
+{"level":"info","message":"Redis client is ready","timestamp":"2025-07-16 18:49:07"}
+{"level":"info","message":"Server is running on port 6700","timestamp":"2025-07-16 18:56:29"}
+{"level":"info","message":"Successfully connected to Redis","timestamp":"2025-07-16 18:56:30"}
+{"level":"info","message":"Redis client is ready","timestamp":"2025-07-16 18:56:30"}
+{"level":"info","message":"Connected to MongoDB","timestamp":"2025-07-16 18:56:32"}
