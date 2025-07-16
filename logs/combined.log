@@ -660,3 +660,6 @@
 {"level":"info","message":"Successfully connected to Redis","timestamp":"2025-07-16 18:56:30"}
 {"level":"info","message":"Redis client is ready","timestamp":"2025-07-16 18:56:30"}
 {"level":"info","message":"Connected to MongoDB","timestamp":"2025-07-16 18:56:32"}
+{"level":"info","message":"Server is running on port 6700","timestamp":"2025-07-16 19:10:20"}
+{"level":"info","message":"Successfully connected to Redis","timestamp":"2025-07-16 19:10:20"}
+{"level":"info","message":"Redis client is ready","timestamp":"2025-07-16 19:10:21"}
