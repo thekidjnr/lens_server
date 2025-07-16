@@ -6,6 +6,7 @@ import { Collection } from "../models/collection.model";
 import { Workspace } from "../models/workspace.model";
 import { getSignedUrl } from "@aws-sdk/cloudfront-signer";
 import { deleteFileFromS3 } from "./s3.controller";
+import { WatermarkedFile } from "../models/watermarkedfile.model";
 
 export const addFileToCollection = async (
   req: Request,
@@ -88,6 +89,7 @@ export const getFilesByCollection = async (
   next: NextFunction
 ) => {
   const { slug } = req.params;
+  const { watermarked } = req.query;
 
   try {
     const collection = await Collection.findOne({ slug });
@@ -98,7 +100,18 @@ export const getFilesByCollection = async (
 
     const workspaceId = collection.workspaceId;
 
-    const files = await File.find({ workspaceId, collectionSlug: slug });
+    let files;
+
+    if (watermarked === "true") {
+      files = await WatermarkedFile.find({
+        collectionId: collection._id,
+      });
+    } else {
+      files = await File.find({
+        workspaceId,
+        collectionSlug: slug,
+      });
+    }
 
     if (!files.length) {
       return next(
@@ -114,6 +127,7 @@ export const getFilesByCollection = async (
     next(err);
   }
 };
+
 
 export const deleteFileFromCollection = async (
   req: Request,

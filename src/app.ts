@@ -3,6 +3,7 @@ import express, { Express, ErrorRequestHandler } from "express";
 import cors, { CorsOptions } from "cors";
 import { createServer } from "http";
 import dotenv from "dotenv";
+// import "./utils/watermark.worker";
 import mongoose from "mongoose";
 import cookieParser from "cookie-parser";
 dotenv.config();
@@ -13,24 +14,25 @@ import collectionRoute from "./routes/collection.routes";
 import fileRoute from "./routes/file.routes";
 import workspaceRoute from "./routes/workspace.routes";
 import s3Route from "./routes/s3.routes";
+import logger from "./utils/logger";
 
 const app: Express = express();
 const httpServer = createServer(app);
 
-//MONGODB CONNECTION
-mongoose.set("strictQuery", false);
+// MONGODB CONNECTION
 const connect = async () => {
   const mongoUri = process.env.MONGO_URI!;
   try {
     await mongoose.connect(mongoUri);
-    console.log("Connected to MongoDB");
+    logger.info("Connected to MongoDB");
   } catch (err) {
+    logger.error("MongoDB connection error: %O", err);
     throw err;
   }
 };
 
 mongoose.connection.on("disconnected", () => {
-  console.log("MongoDB Disconnected");
+  logger.warn("MongoDB Disconnected");
 });
 
 //MIDDLEWARES
@@ -64,10 +66,11 @@ app.use("/collections", collectionRoute);
 app.use("/files", fileRoute);
 app.use("/s3", s3Route);
 
-//ERROR HANDLERS
 const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
   const errorStatus = err.status || 500;
   const errorMessage = err.message || "Something went wrong";
+
+  logger.error("Error: %s\nStack: %s", errorMessage, err.stack);
 
   res.status(errorStatus).json({
     success: false,
@@ -80,8 +83,12 @@ const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
 // Use the error handler
 app.use(errorHandler);
 
+// watermarkWorker.on("completed", (job) => {
+//   logger.info(`Job ${job.id} has been completed`);
+// });
+
 //PORT FOR LISTENING TO APP
 httpServer.listen(`${process.env.PORT}`, () => {
   connect();
-  console.log(`Server is running on ${process.env.PORT}`);
+  logger.info(`Server is running on port ${process.env.PORT}`);
 });

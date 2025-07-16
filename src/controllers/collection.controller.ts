@@ -5,6 +5,13 @@ import { Workspace } from "../models/workspace.model";
 import slugify from "slugify";
 import { deleteFileFromS3 } from "./s3.controller";
 import { File } from "../models/file.model";
+import { S3Client } from "@aws-sdk/client-s3";
+import { allowedMimeTypes, uploadToS3 } from "../utils/s3";
+import path from "path";
+import { WatermarkConfigSchema } from "../utils/watermark.dto";
+import { redis } from "../utils/queue";
+import logger from "../utils/logger";
+import { WatermarkedFile } from "../models/watermarkedfile.model";
 
 export const createCollection = async (
   req: Request,
@@ -138,6 +145,15 @@ export const getCollectionBySlug = async (
       return next(createError(404, "Collection not found."));
     }
 
+    // Find all watermarked images of collection
+    const watermarked = await WatermarkedFile.find({
+      collectionId: collection._id,
+    });
+
+    if (!collection) {
+      return next(createError(404, "Collection not found."));
+    }
+
     const collectionData = collection.toObject();
 
     const url = `${process.env.PREVIEW_URL}/${workspace.slug}/${slug}`;
@@ -149,12 +165,48 @@ export const getCollectionBySlug = async (
       workspaceName: workspace.name,
     };
 
-    console.log(response);
+    logger.info(response);
     res.status(200).json(response);
   } catch (error) {
     next(error);
   }
 };
+
+export const getCollectionById = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const { id } = req.params;
+
+  try {
+    // Find collection by ID
+    const collection = await Collection.findById(id);
+    if (!collection) {
+      return next(createError(404, "Collection not found."));
+    }
+
+    // Find all watermarked images of the collection
+    const watermarked = await WatermarkedFile.find({
+      collectionId: collection._id,
+    });
+
+    const collectionData = collection.toObject();
+
+    const response = {
+      ...collectionData,
+      ...(watermarked &&
+        watermarked.length > 0 && { watermarkedFiles: watermarked }),
+    };
+
+    logger.info(response);
+    res.status(200).json(response);
+  } catch (error) {
+    next(error);
+  }
+};
+
+
 
 export const collectionStatus = async (
   req: Request,
@@ -223,7 +275,7 @@ export const deleteCollection = async (
 
         await File.findByIdAndDelete(file._id);
       } catch (err) {
-        console.error(`Error deleting file ${file._id}:`, err);
+        logger.error(`Error deleting file ${file._id}:`, err);
       }
     }
 
@@ -231,6 +283,146 @@ export const deleteCollection = async (
 
     res.status(200).json({
       message: "Collection and associated files deleted successfully.",
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+const MAX_FILE_SIZE = 5 * 1024 * 1024;
+// const allowedMimeTypes = ["image/jpeg", "image/png", "image/gif"];
+
+export const updateWatermarkConfig = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { collectionId } = req.params;
+
+    // Validate request body against schema
+    const validationResult = WatermarkConfigSchema.safeParse(req.body);
+    if (!validationResult.success) {
+      return next(
+        createError(
+          400,
+          `Invalid watermark configuration: ${validationResult.error.message}`
+        )
+      );
+    }
+    const watermarkConfig = validationResult.data;
+
+    const collection = await Collection.findById(collectionId);
+    if (!collection) {
+      return next(createError(404, "Collection not found."));
+    }
+
+    if (collection.watermarkProgress?.locked) {
+      return next(createError(400, "Watermark already in progress"));
+    }
+
+    let newFileKey: string | undefined;
+
+    if (watermarkConfig.type !== "text") {
+      const file = req.file as Express.Multer.File;
+      if (!file) {
+        return next(createError(400, "Watermark image is required"));
+      }
+
+      if (file.size > MAX_FILE_SIZE) {
+        return next(
+          createError(
+            400,
+            `File size exceeds limit of ${MAX_FILE_SIZE / (1024 * 1024)}MB`
+          )
+        );
+      }
+
+      if (!allowedMimeTypes.includes(file.mimetype)) {
+        return next(
+          createError(400, "Invalid file type. Only images are allowed.")
+        );
+      }
+
+      try {
+        const folder = "watermarks";
+        newFileKey = `${folder}/${collectionId}-${Date.now()}${path.extname(
+          file.originalname
+        )}`;
+
+        await uploadToS3(
+          process.env.AWS_BUCKET_NAME!,
+          newFileKey,
+          file.buffer,
+          file.mimetype
+        );
+
+        if (collection.watermarkConfig?.imageKey) {
+          await deleteFileFromS3(
+            { body: { key: collection.watermarkConfig.imageKey } } as Request,
+            res,
+            next
+          );
+        }
+
+        watermarkConfig.imageKey = newFileKey;
+      } catch (error) {
+        // If new file was uploaded but something else failed, clean it up
+        if (newFileKey) {
+          try {
+            await deleteFileFromS3(
+              { body: { key: newFileKey } } as Request,
+              res,
+              next
+            );
+          } catch (cleanupError) {
+            logger.error(
+              "Failed to cleanup new file after error:",
+              cleanupError
+            );
+          }
+        }
+        throw error;
+      }
+    } else {
+      // For text type, remove any existing image key and file
+      if (collection.watermarkConfig?.imageKey) {
+        try {
+          await deleteFileFromS3(
+            { body: { key: collection.watermarkConfig.imageKey } } as Request,
+            res,
+            next
+          );
+        } catch (error) {
+          logger.error("Failed to delete old watermark image:", error);
+        }
+      }
+      watermarkConfig.imageKey = undefined;
+    }
+
+    const existingConfig = collection.watermarkConfig;
+    const completeConfig = {
+      ...watermarkConfig,
+      CreatedAt: existingConfig?.CreatedAt || new Date(),
+      UpdatedAt: new Date(),
+    };
+
+    collection.setWatermarkConfig(completeConfig);
+    await collection.save();
+
+    // Push task to Redis list
+    await redis.lpush(
+      "watermark-processing",
+      JSON.stringify({
+        collectionId,
+        slug: collection.slug,
+        watermarkConfig: completeConfig,
+      })
+    );
+
+    res.status(200).json({
+      message: "Watermark configuration updated successfully",
+      watermarkConfig: collection.watermarkConfig,
     });
   } catch (err) {
     next(err);

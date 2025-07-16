@@ -1,5 +1,38 @@
 import mongoose, { Schema, Document } from "mongoose";
 
+export type WatermarkConfig = {
+    requirePayment?: boolean;
+    amount?: number;
+    type: "text" | "image";
+    text?: string;
+    imageKey?: string;
+    alignment:
+    | "northwest"
+    | "north"
+    | "northeast"
+    | "west"
+    | "center"
+    | "east"
+    | "southwest"
+    | "south"
+    | "southeast";
+    opacity: number;
+    size: number;
+    rotation: number;
+    tileType: "single" | "grid" | "diagonal";
+    textColor?: string;
+    previewMode: "watermarked" | "blurred" | "none";
+    CreatedAt: Date;
+    UpdatedAt: Date;
+  };
+
+export type WatermarkProgress = {
+  total: number;
+  watermarked: number;
+  locked: boolean;
+  status: "idle" | "processing" | "completed" | "failed";
+}
+
 interface ICollection extends Document {
   name: string;
   slug: string;
@@ -12,7 +45,12 @@ interface ICollection extends Document {
   coverPhotoKey: string;
   template: string;
   createdAt: Date;
+  watermarkConfig?: WatermarkConfig;
+  watermarkProgress?: WatermarkProgress;
+  setWatermarkConfig(config: WatermarkConfig): void;
+  setWatermarkProgress(progress: WatermarkProgress): void;
 }
+ 
 
 const collectionSchema = new Schema<ICollection>({
   name: { type: String, required: true },
@@ -36,7 +74,70 @@ const collectionSchema = new Schema<ICollection>({
     default: "classic",
   },
   createdAt: { type: Date, default: Date.now },
+  watermarkConfig: {
+    requirePayment: { type: Boolean, default: false },
+    amount: { type: Number, default: 0 },
+    type: {
+      type: String,
+      enum: ["text", "image"],
+      required: true,
+    },
+    text: { type: String },
+    imageKey: { type: String },
+    alignment: {
+      type: String,
+      enum: [
+        "northwest",
+        "north",
+        "northeast",
+        "west",
+        "center",
+        "east",
+        "southwest",
+        "south",
+        "southeast",
+      ],
+    },
+    opacity: { type: Number, default: 0.6, min: 0, max: 1 },
+    size: { type: Number, default: 0.3, min: 0, max: 1 },
+    rotation: { type: Number, default: 0, min: 0, max: 360 },
+    tileType: {
+      type: String,
+      enum: ["single", "grid", "diagonal"],
+      default: "single",
+    },
+    textColor: { type: String },
+    previewMode: {
+      type: String,
+      enum: ["watermarked", "blurred", "none"],
+      default: "none",
+    },
+    createdAt: { type: Date, default: Date.now },
+    updatedAt: { type: Date, default: Date.now },
+  },
+  watermarkProgress: {
+    total: { type: Number, default: 0 },
+    watermarked: { type: Number, default: 0 },
+    locked: { type: Boolean, default: false },
+    status: {
+      type: String,
+      enum: ["idle","processing", "completed", "failed"],
+      default: "idle",
+    },
+  }
 });
+
+collectionSchema.methods.setWatermarkConfig = function ( config: WatermarkConfig ) {this.watermarkConfig = {
+    ...config,
+    CreatedAt: config.CreatedAt || new Date(),
+    UpdatedAt: new Date(),
+  };
+};
+
+collectionSchema.methods.setWatermarkProgress = function ( progress: WatermarkProgress ) {
+  this.watermarkProgress = progress;
+};
+
 
 collectionSchema.index({ slug: 1, workspaceId: 1 }, { unique: true });
 

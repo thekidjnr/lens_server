@@ -4,6 +4,7 @@ import { User } from "../models/user.model";
 import { createError } from "../utils/error";
 import mongoose from "mongoose";
 import { deleteFileFromS3 } from "./s3.controller";
+import logger from "../utils/logger";
 
 export const createWorkspace = async (
   req: Request,
@@ -189,7 +190,7 @@ export const updateWorkspaceSlug = async (
 
         // Skip if slug already exists on this doc
         if (ws.slug === proposedSlug) {
-          console.log(`✅ Already has slug: ${proposedSlug}`);
+          logger.info(`✅ Already has slug: ${proposedSlug}`);
           skipped++;
           continue;
         }
@@ -213,7 +214,7 @@ export const updateWorkspaceSlug = async (
           }
         );
 
-        console.log(`✅ Set slug "${proposedSlug}" for ${domain}`);
+        logger.info(`✅ Set slug "${proposedSlug}" for ${domain}`);
         updatedCount++;
       } else {
         console.warn(`⚠️ Invalid or missing domain for workspace: ${ws._id}`);
@@ -228,7 +229,7 @@ export const updateWorkspaceSlug = async (
       total: workspaces.length,
     });
   } catch (err) {
-    console.error("❌ Error creating slugs", err);
+    logger.error("❌ Error creating slugs", err);
     next(err);
   }
 };
