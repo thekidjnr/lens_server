@@ -32,16 +32,31 @@ router.get("/workspace/:workspaceSlug/slug/:slug", getCollectionBySlug);
 router.patch("/:slug/isPublished", collectionStatus);
 router.put("/:collectionId", updateCollection);
 
-router.patch( "/:collectionId/watermark", upload.single("image"),  updateWatermarkConfig );
+router.post(
+  "/:collectionId/watermark",
+  upload.single("image"),
+  updateWatermarkConfig
+);
 
 router.delete("/:collectionId", deleteCollection);
 
 router.get("/get/:id", getCollectionById);
 
-router.get( "/workspace/:workspaceId/watermark-progress", verifyToken, getWorkspaceWatermarkProgress);
+router.get(
+  "/workspace/:workspaceId/watermark-progress",
+  verifyToken,
+  getWorkspaceWatermarkProgress
+);
 
 router.get("/:collectionId/cancel-watermark", verifyToken, cancelWatermarkJob);
 
-router.post( "/watermark", upload.fields([ { name: "image", maxCount: 1 }, { name: "watermarkImage", maxCount: 1 }, ]), processWatermarkImage);
+router.post(
+  "/watermark",
+  upload.fields([
+    { name: "image", maxCount: 1 },
+    { name: "watermarkImage", maxCount: 1 },
+  ]),
+  processWatermarkImage
+);
 
 export default router;
