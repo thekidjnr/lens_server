@@ -1,5 +1,9 @@
 import { Request, Response, NextFunction } from "express";
-import { Collection } from "../models/collection.model";
+import {
+  Collection,
+  WatermarkConfig,
+  WatermarkProgressResponse,
+} from "../models/collection.model";
 import { createError } from "../utils/error";
 import { Workspace } from "../models/workspace.model";
 import slugify from "slugify";
@@ -12,6 +16,7 @@ import { WatermarkConfigSchema } from "../utils/watermark.dto";
 import { redis } from "../utils/queue";
 import logger from "../utils/logger";
 import { WatermarkedFile } from "../models/watermarkedfile.model";
+import { processImageWithWatermark } from "../utils/watermark.proccessor";
 
 export const createCollection = async (
   req: Request,
@@ -195,8 +200,6 @@ export const getCollectionById = async (
 
     const response = {
       ...collectionData,
-      ...(watermarked &&
-        watermarked.length > 0 && { watermarkedFiles: watermarked }),
     };
 
     logger.info(response);
@@ -205,8 +208,6 @@ export const getCollectionById = async (
     next(error);
   }
 };
-
-
 
 export const collectionStatus = async (
   req: Request,
@@ -251,6 +252,16 @@ export const deleteCollection = async (
       return next(createError(404, "Collection not found."));
     }
 
+    // Check if collection is currently in progress
+    if (collection.isInProgress()) {
+      return next(
+        createError(
+          400,
+          "Cannot delete collection while watermark processing is in progress"
+        )
+      );
+    }
+
     const files = await File.find({ collectionSlug: collection.slug });
 
     for (const file of files) {
@@ -279,6 +290,9 @@ export const deleteCollection = async (
       }
     }
 
+    // Remove from queue if it's there
+    await removeFromQueue(collectionId);
+
     await Collection.findByIdAndDelete(collectionId);
 
     res.status(200).json({
@@ -289,8 +303,192 @@ export const deleteCollection = async (
   }
 };
 
+// Helper function to get queue position
+const getQueuePosition = async (
+  collectionId: string
+): Promise<number | undefined> => {
+  try {
+    const queueItems = await redis.lrange("watermark-processing", 0, -1);
+    const position = queueItems.findIndex((item) => {
+      const parsedItem = JSON.parse(item);
+      return parsedItem.collectionId === collectionId;
+    });
+    return position >= 0 ? position + 1 : undefined;
+  } catch (error) {
+    logger.error("Error getting queue position:", error);
+    return undefined;
+  }
+};
+
+// Helper function to remove item from queue
+const removeFromQueue = async (collectionId: string): Promise<void> => {
+  try {
+    const queueItems = await redis.lrange("watermark-processing", 0, -1);
+    for (let i = 0; i < queueItems.length; i++) {
+      const parsedItem = JSON.parse(queueItems[i]);
+      if (parsedItem.collectionId === collectionId) {
+        await redis.lrem("watermark-processing", 1, queueItems[i]);
+        logger.info(`Removed collection ${collectionId} from queue`);
+        break;
+      }
+    }
+  } catch (error) {
+    logger.error("Error removing from queue:", error);
+  }
+};
+
+// New endpoint to get workspace watermark progress
+export const getWorkspaceWatermarkProgress = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { workspaceId } = req.params;
+
+    // Verify workspace exists
+    const workspace = await Workspace.findById(workspaceId);
+    if (!workspace) {
+      return next(createError(404, "Workspace not found"));
+    }
+
+    // Get all collections in workspace with watermark progress
+    const collections = await Collection.find({
+      workspaceId,
+      $or: [
+        { "watermarkProgress.status": { $exists: true, $ne: "idle" } },
+        { watermarkConfig: { $exists: true } },
+      ],
+    }).select("name watermarkProgress watermarkConfig");
+
+   
+
+    const progressData: WatermarkProgressResponse[] = [];
+
+    for (const collection of collections) {
+      const collectionId = collection._id as string
+      const progress = collection.watermarkProgress;
+
+      if (!progress || progress.status === "idle") continue;
+
+      let queuePosition: number | undefined;
+      let elapsedTime: number | undefined;
+
+      // Get queue position if queued
+      if (progress.status === "queued") {
+        queuePosition = await getQueuePosition(collectionId);
+      }
+
+      // Calculate elapsed time if processing
+      if (progress.status === "processing" && progress.startedAt) {
+        elapsedTime = Math.floor(
+          (Date.now() - progress.startedAt.getTime()) / 1000
+        );
+      }
+
+      // Calculate elapsed time if completed
+      if (
+        progress.status === "completed" &&
+        progress.startedAt &&
+        progress.completedAt
+      ) {
+        elapsedTime = Math.floor(
+          (progress.completedAt.getTime() - progress.startedAt.getTime()) / 1000
+        );
+      }
+
+      const progressPercentage =
+        progress.total > 0
+          ? Math.round((progress.watermarked / progress.total) * 100)
+          : 0;
+
+      progressData.push({
+        collectionId,
+        collectionName: collection.name,
+        status: progress.status,
+        totalImages: progress.total,
+        processedImages: progress.watermarked,
+        queuePosition,
+        queuedAt: progress.queuedAt,
+        startedAt: progress.startedAt,
+        completedAt: progress.completedAt,
+        estimatedTimeRemaining: progress.estimatedTimeRemaining,
+        currentImageName: progress.currentImageName,
+        progressPercentage,
+        elapsedTime,
+      });
+    }
+
+    // Sort by status priority (processing first, then queued, then others)
+    progressData.sort((a, b) => {
+      const statusPriority = {
+        processing: 0,
+        queued: 1,
+        completed: 2,
+        failed: 3,
+        idle: 4,
+      };
+      return (
+        (statusPriority[a.status as keyof typeof statusPriority] || 5) -
+        (statusPriority[b.status as keyof typeof statusPriority] || 5)
+      );
+    });
+
+    res.status(200).json({
+      workspaceId,
+      workspaceName: workspace.name,
+      totalActiveJobs: progressData.length,
+      progressData,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// New endpoint to cancel a queued watermark job
+export const cancelWatermarkJob = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { collectionId } = req.params;
+
+    const collection = await Collection.findById(collectionId);
+    if (!collection) {
+      return next(createError(404, "Collection not found"));
+    }
+
+    const progress = collection.watermarkProgress;
+
+    if (!progress || progress.status !== "queued") {
+      return next(
+        createError(400, "Collection is not queued for watermark processing")
+      );
+    }
+
+    // Remove from queue
+    await removeFromQueue(collectionId);
+
+    // Update status to idle
+    collection.setWatermarkProgress({
+      ...progress,
+      status: "idle",
+      queuedAt: undefined,
+      locked: false,
+    });
+    await collection.save();
+
+    res.status(200).json({
+      message: "Watermark job cancelled successfully",
+      collectionId,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
-// const allowedMimeTypes = ["image/jpeg", "image/png", "image/gif"];
 
 export const updateWatermarkConfig = async (
   req: Request,
@@ -317,8 +515,14 @@ export const updateWatermarkConfig = async (
       return next(createError(404, "Collection not found."));
     }
 
-    if (collection.watermarkProgress?.locked) {
-      return next(createError(400, "Watermark already in progress"));
+    // Check if collection can be queued (not already in progress)
+    if (!collection.canBeQueued()) {
+      return next(
+        createError(
+          400,
+          `Watermark processing is already ${collection.watermarkProgress?.status}. Please wait for completion or cancellation.`
+        )
+      );
     }
 
     let newFileKey: string | undefined;
@@ -408,23 +612,79 @@ export const updateWatermarkConfig = async (
     };
 
     collection.setWatermarkConfig(completeConfig);
+
+    // Set initial queued progress
+    collection.setWatermarkProgress({
+      total: 0,
+      watermarked: 0,
+      locked: false,
+      status: "queued",
+      queuedAt: new Date(),
+    });
+
     await collection.save();
 
-    // Push task to Redis list
-    await redis.lpush(
-      "watermark-processing",
-      JSON.stringify({
-        collectionId,
-        slug: collection.slug,
-        watermarkConfig: completeConfig,
-      })
+    // Push task to Redis queue
+    const queueData = {
+      collectionId,
+      slug: collection.slug,
+      watermarkConfig: completeConfig,
+    };
+
+    await redis.lpush("watermark-processing", JSON.stringify(queueData));
+
+    // Get queue position
+    const queuePosition = await getQueuePosition(collectionId);
+
+    logger.info(
+      `Collection ${collectionId} added to watermark queue at position ${queuePosition}`
     );
 
     res.status(200).json({
-      message: "Watermark configuration updated successfully",
+      message: "Watermark configuration updated and added to processing queue",
       watermarkConfig: collection.watermarkConfig,
+      watermarkProgress: collection.watermarkProgress,
+      queuePosition,
     });
   } catch (err) {
     next(err);
+  }
+};
+
+export const processWatermarkImage = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const imageFile = (req.files as any)?.["image"]?.[0];
+    if (!imageFile) {
+      res.status(400).json({ error: "Image file is required" });
+      return;
+    }
+
+    const inputBuffer = imageFile.buffer;
+
+    const watermarkImageBuffer = (req.files as any)?.["watermarkImage"]?.[0]
+      ?.buffer;
+
+    const watermarkConfigRaw = req.body.config;
+    if (!watermarkConfigRaw) {
+      res.status(400).json({ error: "Watermark config is required" });
+      return;
+    }
+
+    const watermarkConfig: WatermarkConfig = JSON.parse(watermarkConfigRaw);
+
+    const outputBuffer = await processImageWithWatermark({
+      inputBuffer,
+      watermarkConfig,
+      watermarkImageBuffer,
+    });
+
+    res.set("Content-Type", "image/png");
+    res.send(outputBuffer);
+  } catch (error) {
+    logger.error("Error processing image:", error);
+    res.status(500).json({ error: "Failed to process image" });
   }
 };
