@@ -39,6 +39,34 @@ mongoose.connection.on("disconnected", () => {
 app.use(express.json());
 app.use(cookieParser());
 
+// REQUEST LOGGING MIDDLEWARE
+app.use((req, res, next) => {
+  const start = Date.now();
+
+  // Log the incoming request
+  logger.info(`${req.method} ${req.originalUrl}`, {
+    method: req.method,
+    url: req.originalUrl,
+    ip: req.ip,
+    userAgent: req.get("User-Agent"),
+    timestamp: new Date().toISOString(),
+  });
+
+  // Log the response when it finishes
+  res.on("finish", () => {
+    const duration = Date.now() - start;
+    logger.info(`${req.method} ${req.originalUrl} - ${res.statusCode}`, {
+      method: req.method,
+      url: req.originalUrl,
+      statusCode: res.statusCode,
+      duration: `${duration}ms`,
+      ip: req.ip,
+    });
+  });
+
+  next();
+});
+
 // CORS POLICIES
 const corsOptions: CorsOptions = {
   origin: [
