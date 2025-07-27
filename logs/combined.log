@@ -1092,3 +1092,22 @@
 {"level":"info","message":"Successfully connected to Redis","timestamp":"2025-07-27 13:18:30"}
 {"level":"info","message":"Redis client is ready","timestamp":"2025-07-27 13:18:30"}
 {"level":"warn","message":"MongoDB Disconnected","timestamp":"2025-07-27 13:25:52"}
+{"0":"r","1":"e","10":"D","11":"O","12":"U","13":"T","2":"a","3":"d","4":" ","5":"E","6":"T","7":"I","8":"M","9":"E","level":"error","message":"Redis connection error:","timestamp":"2025-07-27 15:28:30"}
+{"level":"info","message":"Retrying Redis connection (attempt 1) after 100ms","timestamp":"2025-07-27 15:28:30"}
+{"level":"info","message":"Successfully connected to Redis","timestamp":"2025-07-27 15:28:30"}
+{"level":"info","message":"Redis client is ready","timestamp":"2025-07-27 15:28:31"}
+{"level":"info","message":"Retrying Redis connection (attempt 1) after 100ms","timestamp":"2025-07-27 15:38:33"}
+{"level":"info","message":"Successfully connected to Redis","timestamp":"2025-07-27 15:38:35"}
+{"level":"info","message":"Redis client is ready","timestamp":"2025-07-27 15:38:36"}
+{"level":"warn","message":"MongoDB Disconnected","timestamp":"2025-07-27 15:52:42"}
+{"level":"warn","message":"MongoDB Disconnected","timestamp":"2025-07-27 16:32:17"}
+{"level":"info","message":"Server is running on port 6700","timestamp":"2025-07-27 16:57:30"}
+{"level":"info","message":"Successfully connected to Redis","timestamp":"2025-07-27 16:57:30"}
+{"level":"info","message":"Redis client is ready","timestamp":"2025-07-27 16:57:30"}
+{"level":"info","message":"Connected to MongoDB","timestamp":"2025-07-27 16:57:32"}
+{"level":"info","message":"Retrying Redis connection (attempt 1) after 100ms","timestamp":"2025-07-27 17:07:30"}
+{"level":"info","message":"Successfully connected to Redis","timestamp":"2025-07-27 17:07:31"}
+{"level":"info","message":"Redis client is ready","timestamp":"2025-07-27 17:07:31"}
+{"level":"info","message":"Retrying Redis connection (attempt 1) after 100ms","timestamp":"2025-07-27 17:17:31"}
+{"level":"info","message":"Successfully connected to Redis","timestamp":"2025-07-27 17:17:31"}
+{"level":"info","message":"Redis client is ready","timestamp":"2025-07-27 17:17:31"}
