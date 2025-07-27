@@ -87,6 +87,11 @@ app.get("/", (req, res) => {
   res.send("Welcome Lenslyst");
 });
 
+// Add this health endpoint
+app.get("/health", (req, res) => {
+  res.status(200).json({ status: "OK", timestamp: new Date().toISOString() });
+});
+
 app.use("/auth", authRoute);
 app.use("/user", userRoute);
 app.use("/workspace", workspaceRoute);

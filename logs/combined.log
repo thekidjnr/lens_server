@@ -1065,3 +1065,30 @@
 {"level":"info","message":"Successfully connected to Redis","timestamp":"2025-07-27 12:24:38"}
 {"level":"info","message":"Redis client is ready","timestamp":"2025-07-27 12:24:38"}
 {"level":"info","message":"Connected to MongoDB","timestamp":"2025-07-27 12:24:40"}
+{"level":"info","message":"Retrying Redis connection (attempt 1) after 100ms","timestamp":"2025-07-27 12:34:38"}
+{"level":"info","message":"Successfully connected to Redis","timestamp":"2025-07-27 12:34:39"}
+{"level":"info","message":"Redis client is ready","timestamp":"2025-07-27 12:34:39"}
+{"level":"info","message":"Retrying Redis connection (attempt 1) after 100ms","timestamp":"2025-07-27 12:44:39"}
+{"level":"info","message":"Successfully connected to Redis","timestamp":"2025-07-27 12:44:39"}
+{"level":"info","message":"Redis client is ready","timestamp":"2025-07-27 12:44:39"}
+{"level":"info","message":"Server is running on port 6700","timestamp":"2025-07-27 12:46:09"}
+{"level":"info","message":"Successfully connected to Redis","timestamp":"2025-07-27 12:46:10"}
+{"level":"info","message":"Server is running on port 6700","timestamp":"2025-07-27 12:46:12"}
+{"level":"info","message":"Successfully connected to Redis","timestamp":"2025-07-27 12:46:12"}
+{"level":"info","message":"Redis client is ready","timestamp":"2025-07-27 12:46:13"}
+{"level":"info","message":"Connected to MongoDB","timestamp":"2025-07-27 12:46:14"}
+{"level":"info","message":"Retrying Redis connection (attempt 1) after 100ms","timestamp":"2025-07-27 12:56:13"}
+{"level":"info","message":"Successfully connected to Redis","timestamp":"2025-07-27 12:56:13"}
+{"level":"info","message":"Redis client is ready","timestamp":"2025-07-27 12:56:13"}
+{"level":"info","message":"Server is running on port 6700","timestamp":"2025-07-27 13:08:29"}
+{"level":"info","message":"Successfully connected to Redis","timestamp":"2025-07-27 13:08:29"}
+{"level":"info","message":"Redis client is ready","timestamp":"2025-07-27 13:08:29"}
+{"level":"info","message":"Connected to MongoDB","timestamp":"2025-07-27 13:08:31"}
+{"ip":"::1","level":"info","message":"POST /collections/watermark","method":"POST","timestamp":"2025-07-27T13:08:45.872Z","url":"/collections/watermark","userAgent":"PostmanRuntime/7.44.1"}
+{"duration":"509ms","ip":"::1","level":"info","message":"POST /collections/watermark - 200","method":"POST","statusCode":200,"timestamp":"2025-07-27 13:08:46","url":"/collections/watermark"}
+{"ip":"::1","level":"info","message":"POST /collections/watermark","method":"POST","timestamp":"2025-07-27T13:10:22.011Z","url":"/collections/watermark","userAgent":"PostmanRuntime/7.44.1"}
+{"duration":"224ms","ip":"::1","level":"info","message":"POST /collections/watermark - 200","method":"POST","statusCode":200,"timestamp":"2025-07-27 13:10:22","url":"/collections/watermark"}
+{"level":"info","message":"Retrying Redis connection (attempt 1) after 100ms","timestamp":"2025-07-27 13:18:30"}
+{"level":"info","message":"Successfully connected to Redis","timestamp":"2025-07-27 13:18:30"}
+{"level":"info","message":"Redis client is ready","timestamp":"2025-07-27 13:18:30"}
+{"level":"warn","message":"MongoDB Disconnected","timestamp":"2025-07-27 13:25:52"}
