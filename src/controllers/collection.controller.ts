@@ -361,12 +361,10 @@ export const getWorkspaceWatermarkProgress = async (
       ],
     }).select("name watermarkProgress watermarkConfig");
 
-   
-
     const progressData: WatermarkProgressResponse[] = [];
 
     for (const collection of collections) {
-      const collectionId = collection._id as string
+      const collectionId = collection._id as string;
       const progress = collection.watermarkProgress;
 
       if (!progress || progress.status === "idle") continue;
@@ -497,9 +495,19 @@ export const updateWatermarkConfig = async (
 ) => {
   try {
     const { collectionId } = req.params;
+    const file = req.file as Express.Multer.File;
+
+    const watermarkConfigRaw = req.body.watermarkConfig;
+    if (!watermarkConfigRaw) {
+      res.status(400).json({ error: "Watermark config is required" });
+      return;
+    }
 
     // Validate request body against schema
-    const validationResult = WatermarkConfigSchema.safeParse(req.body);
+    const validationResult = file
+      ? WatermarkConfigSchema.safeParse(JSON.parse(watermarkConfigRaw))
+      : WatermarkConfigSchema.safeParse(watermarkConfigRaw);
+
     if (!validationResult.success) {
       return next(
         createError(
@@ -519,7 +527,7 @@ export const updateWatermarkConfig = async (
     if (!collection.canBeQueued()) {
       return next(
         createError(
-          400,
+          200,
           `Watermark processing is already ${collection.watermarkProgress?.status}. Please wait for completion or cancellation.`
         )
       );
@@ -664,6 +672,7 @@ export const processWatermarkImage = async (
 
     const inputBuffer = imageFile.buffer;
 
+    // Make watermarkImage optional - only required for image-type watermarks
     const watermarkImageBuffer = (req.files as any)?.["watermarkImage"]?.[0]
       ?.buffer;
 
@@ -675,10 +684,19 @@ export const processWatermarkImage = async (
 
     const watermarkConfig: WatermarkConfig = JSON.parse(watermarkConfigRaw);
 
+    // Validate that watermarkImage is provided when type is 'image'
+    if (watermarkConfig.type === "image" && !watermarkImageBuffer) {
+      res.status(400).json({
+        error:
+          "Watermark image file is required when watermark type is 'image'",
+      });
+      return;
+    }
+
     const outputBuffer = await processImageWithWatermark({
       inputBuffer,
       watermarkConfig,
-      watermarkImageBuffer,
+      watermarkImageBuffer, // This can now be undefined for text watermarks
     });
 
     res.set("Content-Type", "image/png");
