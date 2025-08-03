@@ -89,7 +89,7 @@ export const getFilesByCollection = async (
   next: NextFunction
 ) => {
   const { slug } = req.params;
-  const { watermarked } = req.query;
+  const { watermarked, base } = req.query;
 
   try {
     const collection = await Collection.findOne({ slug });
@@ -100,10 +100,7 @@ export const getFilesByCollection = async (
 
     const workspaceId = collection.workspaceId;
 
-    if (
-      collection.watermarkConfig?.previewMode !== "none" ||
-      watermarked === "true"
-    ) {
+    if (collection.watermarkConfig?.previewMode !== "none" || base !== "true") {
       const files = await WatermarkedFile.find({
         collectionId: collection._id,
         workspaceId,
