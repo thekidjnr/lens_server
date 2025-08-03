@@ -100,7 +100,24 @@ export const getFilesByCollection = async (
 
     const workspaceId = collection.workspaceId;
 
-    if (collection.watermarkConfig?.previewMode !== "none" || base !== "true") {
+    // If base is explicitly true, always return default images
+    if (base === "true") {
+      const files = await File.find({ workspaceId, collectionSlug: slug });
+
+      if (!files.length) {
+        return next(
+          createError(
+            404,
+            "No files found for this collection in the specified workspace."
+          )
+        );
+      }
+
+      return res.status(200).json(files);
+    }
+
+    // For all other cases (base !== "true"), check watermark config
+    if (collection.watermarkConfig?.previewMode !== "none") {
       const files = await WatermarkedFile.find({
         collectionId: collection._id,
         workspaceId,
@@ -118,6 +135,7 @@ export const getFilesByCollection = async (
       return res.status(200).json(files);
     }
 
+    // Default case: return original files
     const files = await File.find({ workspaceId, collectionSlug: slug });
 
     if (!files.length) {
