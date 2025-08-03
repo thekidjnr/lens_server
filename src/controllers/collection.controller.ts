@@ -150,11 +150,6 @@ export const getCollectionBySlug = async (
       return next(createError(404, "Collection not found."));
     }
 
-    // Find all watermarked images of collection
-    const watermarked = await WatermarkedFile.find({
-      collectionId: collection._id,
-    });
-
     if (!collection) {
       return next(createError(404, "Collection not found."));
     }
@@ -303,7 +298,9 @@ export const deleteCollection = async (
   }
 };
 
-// Helper function to get queue position
+////////////// Utils
+const MAX_FILE_SIZE = 5 * 1024 * 1024;
+
 const getQueuePosition = async (
   collectionId: string
 ): Promise<number | undefined> => {
@@ -320,7 +317,6 @@ const getQueuePosition = async (
   }
 };
 
-// Helper function to remove item from queue
 const removeFromQueue = async (collectionId: string): Promise<void> => {
   try {
     const queueItems = await redis.lrange("watermark-processing", 0, -1);
@@ -337,113 +333,7 @@ const removeFromQueue = async (collectionId: string): Promise<void> => {
   }
 };
 
-// New endpoint to get workspace watermark progress
-export const getWorkspaceWatermarkProgress = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const { workspaceId } = req.params;
-
-    // Verify workspace exists
-    const workspace = await Workspace.findById(workspaceId);
-    if (!workspace) {
-      return next(createError(404, "Workspace not found"));
-    }
-
-    // Get all collections in workspace with watermark progress
-    const collections = await Collection.find({
-      workspaceId,
-      $or: [
-        { "watermarkProgress.status": { $exists: true, $ne: "idle" } },
-        { watermarkConfig: { $exists: true } },
-      ],
-    }).select("name watermarkProgress watermarkConfig");
-
-    const progressData: WatermarkProgressResponse[] = [];
-
-    for (const collection of collections) {
-      const collectionId = collection._id as string;
-      const progress = collection.watermarkProgress;
-
-      if (!progress || progress.status === "idle") continue;
-
-      let queuePosition: number | undefined;
-      let elapsedTime: number | undefined;
-
-      // Get queue position if queued
-      if (progress.status === "queued") {
-        queuePosition = await getQueuePosition(collectionId);
-      }
-
-      // Calculate elapsed time if processing
-      if (progress.status === "processing" && progress.startedAt) {
-        elapsedTime = Math.floor(
-          (Date.now() - progress.startedAt.getTime()) / 1000
-        );
-      }
-
-      // Calculate elapsed time if completed
-      if (
-        progress.status === "completed" &&
-        progress.startedAt &&
-        progress.completedAt
-      ) {
-        elapsedTime = Math.floor(
-          (progress.completedAt.getTime() - progress.startedAt.getTime()) / 1000
-        );
-      }
-
-      const progressPercentage =
-        progress.total > 0
-          ? Math.round((progress.watermarked / progress.total) * 100)
-          : 0;
-
-      progressData.push({
-        collectionId,
-        collectionName: collection.name,
-        status: progress.status,
-        totalImages: progress.total,
-        processedImages: progress.watermarked,
-        queuePosition,
-        queuedAt: progress.queuedAt,
-        startedAt: progress.startedAt,
-        completedAt: progress.completedAt,
-        estimatedTimeRemaining: progress.estimatedTimeRemaining,
-        currentImageName: progress.currentImageName,
-        progressPercentage,
-        elapsedTime,
-      });
-    }
-
-    // Sort by status priority (processing first, then queued, then others)
-    progressData.sort((a, b) => {
-      const statusPriority = {
-        processing: 0,
-        queued: 1,
-        completed: 2,
-        failed: 3,
-        idle: 4,
-      };
-      return (
-        (statusPriority[a.status as keyof typeof statusPriority] || 5) -
-        (statusPriority[b.status as keyof typeof statusPriority] || 5)
-      );
-    });
-
-    res.status(200).json({
-      workspaceId,
-      workspaceName: workspace.name,
-      totalActiveJobs: progressData.length,
-      progressData,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
-
-// New endpoint to cancel a queued watermark job
+////////// Procceses
 export const cancelWatermarkJob = async (
   req: Request,
   res: Response,
@@ -485,8 +375,6 @@ export const cancelWatermarkJob = async (
     next(error);
   }
 };
-
-const MAX_FILE_SIZE = 5 * 1024 * 1024;
 
 export const updateWatermarkConfig = async (
   req: Request,
@@ -704,5 +592,189 @@ export const processWatermarkImage = async (
   } catch (error) {
     logger.error("Error processing image:", error);
     res.status(500).json({ error: "Failed to process image" });
+  }
+};
+
+//////// Progress
+export const getCollectionWatermarkProgress = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { collectionId } = req.params;
+
+    // Find the specific collection
+    const collection = await Collection.findById(collectionId).select(
+      "name workspaceId watermarkProgress watermarkConfig"
+    );
+
+    if (!collection) {
+      return next(createError(404, "Collection not found"));
+    }
+
+    const progress = collection.watermarkProgress;
+
+    // If no watermark progress, status is idle, or status is completed, return basic info
+    if (
+      !progress ||
+      progress.status === "idle" ||
+      progress.status === "completed"
+    ) {
+      return res.status(200).json({
+        collectionId: collection._id,
+        collectionName: collection.name,
+        status: progress?.status || "idle",
+        totalImages: 0,
+        processedImages: 0,
+        progressPercentage: 0,
+        hasWatermarkConfig: !!collection.watermarkConfig,
+      });
+    }
+
+    let queuePosition: number | undefined;
+    let elapsedTime: number | undefined;
+
+    // Get queue position if queued
+    if (progress.status === "queued") {
+      queuePosition = await getQueuePosition(collectionId);
+    }
+
+    // Calculate elapsed time if processing
+    if (progress.status === "processing" && progress.startedAt) {
+      elapsedTime = Math.floor(
+        (Date.now() - progress.startedAt.getTime()) / 1000
+      );
+    }
+
+    const progressPercentage =
+      progress.total > 0
+        ? Math.round((progress.watermarked / progress.total) * 100)
+        : 0;
+
+    const progressData: WatermarkProgressResponse = {
+      collectionId: collection._id as string,
+      collectionName: collection.name,
+      status: progress.status,
+      totalImages: progress.total,
+      processedImages: progress.watermarked,
+      queuePosition,
+      queuedAt: progress.queuedAt,
+      startedAt: progress.startedAt,
+      completedAt: progress.completedAt,
+      estimatedTimeRemaining: progress.estimatedTimeRemaining,
+      currentImageName: progress.currentImageName,
+      progressPercentage,
+      elapsedTime,
+    };
+
+    res.status(200).json(progressData);
+  } catch (error) {
+    next(error);
+  }
+};
+
+// New endpoint to get workspace watermark progress
+export const getWorkspaceWatermarkProgress = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { workspaceId } = req.params;
+
+    // Verify workspace exists
+    const workspace = await Workspace.findById(workspaceId);
+    if (!workspace) {
+      return next(createError(404, "Workspace not found"));
+    }
+
+    // Get all collections in workspace with watermark progress (excluding completed)
+    const collections = await Collection.find({
+      workspaceId,
+      $or: [
+        {
+          "watermarkProgress.status": {
+            $exists: true,
+            $nin: ["idle", "completed"],
+          },
+        },
+        { watermarkConfig: { $exists: true } },
+      ],
+    }).select("name watermarkProgress watermarkConfig");
+
+    const progressData: WatermarkProgressResponse[] = [];
+
+    for (const collection of collections) {
+      const collectionId = collection._id as string;
+      const progress = collection.watermarkProgress;
+
+      // Skip if no progress, idle, or completed
+      if (
+        !progress ||
+        progress.status === "idle" ||
+        progress.status === "completed"
+      )
+        continue;
+
+      let queuePosition: number | undefined;
+      let elapsedTime: number | undefined;
+
+      // Get queue position if queued
+      if (progress.status === "queued") {
+        queuePosition = await getQueuePosition(collectionId);
+      }
+
+      // Calculate elapsed time if processing
+      if (progress.status === "processing" && progress.startedAt) {
+        elapsedTime = Math.floor(
+          (Date.now() - progress.startedAt.getTime()) / 1000
+        );
+      }
+
+      const progressPercentage =
+        progress.total > 0
+          ? Math.round((progress.watermarked / progress.total) * 100)
+          : 0;
+
+      progressData.push({
+        collectionId,
+        collectionName: collection.name,
+        status: progress.status,
+        totalImages: progress.total,
+        processedImages: progress.watermarked,
+        queuePosition,
+        queuedAt: progress.queuedAt,
+        startedAt: progress.startedAt,
+        completedAt: progress.completedAt,
+        estimatedTimeRemaining: progress.estimatedTimeRemaining,
+        currentImageName: progress.currentImageName,
+        progressPercentage,
+        elapsedTime,
+      });
+    }
+
+    // Sort by status priority (processing first, then queued, then failed)
+    progressData.sort((a, b) => {
+      const statusPriority = {
+        processing: 0,
+        queued: 1,
+        failed: 2,
+        idle: 3,
+      };
+      return (
+        (statusPriority[a.status as keyof typeof statusPriority] || 4) -
+        (statusPriority[b.status as keyof typeof statusPriority] || 4)
+      );
+    });
+
+    res.status(200).json({
+      workspaceId,
+      workspaceName: workspace.name,
+      totalActiveJobs: progressData.length,
+      progressData,
+    });
+  } catch (error) {
+    next(error);
   }
 };
