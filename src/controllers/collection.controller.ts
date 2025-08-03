@@ -413,12 +413,12 @@ export const updateWatermarkConfig = async (
 
     // Check if collection can be queued (not already in progress)
     if (!collection.canBeQueued()) {
-      return next(
-        createError(
-          200,
-          `Watermark processing is already ${collection.watermarkProgress?.status}. Please wait for completion or cancellation.`
-        )
-      );
+      return res.status(200).json({
+        success: false,
+        message: `Watermark processing is already ${collection.watermarkProgress?.status}. Please wait for completion or cancellation.`,
+        status: collection.watermarkProgress?.status,
+        canQueue: false,
+      });
     }
 
     let newFileKey: string | undefined;
