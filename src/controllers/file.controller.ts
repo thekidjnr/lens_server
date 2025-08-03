@@ -83,13 +83,13 @@ export const addFileToCollection = async (
   }
 };
 
+// Endpoint 1: Smart fetching based on watermark configuration
 export const getFilesByCollection = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
   const { slug } = req.params;
-  const { watermarked, base } = req.query;
 
   try {
     const collection = await Collection.findOne({ slug });
@@ -100,23 +100,7 @@ export const getFilesByCollection = async (
 
     const workspaceId = collection.workspaceId;
 
-    // If base is explicitly true, always return default images
-    if (base === "true") {
-      const files = await File.find({ workspaceId, collectionSlug: slug });
-
-      if (!files.length) {
-        return next(
-          createError(
-            404,
-            "No files found for this collection in the specified workspace."
-          )
-        );
-      }
-
-      return res.status(200).json(files);
-    }
-
-    // For all other cases (base !== "true"), check watermark config
+    // Check watermark configuration and fetch accordingly
     if (collection.watermarkConfig?.previewMode !== "none") {
       const files = await WatermarkedFile.find({
         collectionId: collection._id,
@@ -127,7 +111,7 @@ export const getFilesByCollection = async (
         return next(
           createError(
             404,
-            "No files found for this collection in the specified workspace."
+            "No watermarked files found for this collection in the specified workspace."
           )
         );
       }
@@ -135,7 +119,7 @@ export const getFilesByCollection = async (
       return res.status(200).json(files);
     }
 
-    // Default case: return original files
+    // Default case: return original files when watermark is "none"
     const files = await File.find({ workspaceId, collectionSlug: slug });
 
     if (!files.length) {
@@ -143,6 +127,41 @@ export const getFilesByCollection = async (
         createError(
           404,
           "No files found for this collection in the specified workspace."
+        )
+      );
+    }
+
+    res.status(200).json(files);
+  } catch (err) {
+    next(err);
+  }
+};
+
+// Endpoint 2: Always fetch from the original File model only
+export const getOriginalFilesByCollection = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const { slug } = req.params;
+
+  try {
+    const collection = await Collection.findOne({ slug });
+
+    if (!collection) {
+      return next(createError(404, "Collection not found."));
+    }
+
+    const workspaceId = collection.workspaceId;
+
+    // Always fetch from the original File model
+    const files = await File.find({ workspaceId, collectionSlug: slug });
+
+    if (!files.length) {
+      return next(
+        createError(
+          404,
+          "No original files found for this collection in the specified workspace."
         )
       );
     }
