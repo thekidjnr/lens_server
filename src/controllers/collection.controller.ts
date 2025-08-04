@@ -448,7 +448,7 @@ export const updateWatermarkConfig = async (
         // collection.lockWatermarkProgress();
         // await collection.save();
 
-        const folder = "watermarks";
+        const folder = "watermark-logos";
         newFileKey = `${folder}/${collectionId}-${Date.now()}${path.extname(
           file.originalname
         )}`;
