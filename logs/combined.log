@@ -1673,3 +1673,250 @@
 {"level":"info","message":"Successfully connected to Redis","timestamp":"2025-08-03 23:18:23"}
 {"level":"info","message":"Redis client is ready","timestamp":"2025-08-03 23:18:23"}
 {"level":"info","message":"Connected to MongoDB","timestamp":"2025-08-03 23:18:24"}
+{"level":"info","message":"Server is running on port 6700","timestamp":"2025-08-03 23:21:59"}
+{"level":"info","message":"Successfully connected to Redis","timestamp":"2025-08-03 23:21:59"}
+{"level":"info","message":"Redis client is ready","timestamp":"2025-08-03 23:21:59"}
+{"level":"info","message":"Connected to MongoDB","timestamp":"2025-08-03 23:22:01"}
+{"level":"info","message":"Retrying Redis connection (attempt 1) after 100ms","timestamp":"2025-08-03 23:31:59"}
+{"level":"info","message":"Successfully connected to Redis","timestamp":"2025-08-03 23:32:00"}
+{"level":"info","message":"Redis client is ready","timestamp":"2025-08-03 23:32:00"}
+{"level":"warn","message":"MongoDB Disconnected","timestamp":"2025-08-04 00:19:13"}
+{"level":"warn","message":"MongoDB Disconnected","timestamp":"2025-08-04 02:36:22"}
+{"level":"warn","message":"MongoDB Disconnected","timestamp":"2025-08-04 03:37:37"}
+{"ip":"::1","level":"info","message":"GET /collections/workspace/678537dc492047c21fb312ac/slug/new-collection","method":"GET","timestamp":"2025-08-04T07:29:05.546Z","url":"/collections/workspace/678537dc492047c21fb312ac/slug/new-collection","userAgent":"PostmanRuntime/7.45.0"}
+{"level":"info","message":"Server is running on port 6700","timestamp":"2025-08-04 07:29:41"}
+{"level":"info","message":"Successfully connected to Redis","timestamp":"2025-08-04 07:29:41"}
+{"level":"info","message":"Redis client is ready","timestamp":"2025-08-04 07:29:41"}
+{"level":"info","message":"Connected to MongoDB","timestamp":"2025-08-04 07:29:43"}
+{"ip":"::1","level":"info","message":"GET /collections/workspace/678537dc492047c21fb312ac/slug/new-collection","method":"GET","timestamp":"2025-08-04T07:29:44.779Z","url":"/collections/workspace/678537dc492047c21fb312ac/slug/new-collection","userAgent":"PostmanRuntime/7.45.0"}
+{"level":"error","message":"Error: Workspace not found.\nStack: Error: Workspace not found.\n    at createError (/Users/hughestottimeh/Docs/Codes/Lenslyst/lens_server/src/utils/error.ts:7:15)\n    at <anonymous> (/Users/hughestottimeh/Docs/Codes/Lenslyst/lens_server/src/controllers/collection.controller.ts:140:19)\n    at processTicksAndRejections (native:7:39)","timestamp":"2025-08-04 07:36:16"}
+{"duration":"391379ms","ip":"::1","level":"info","message":"GET /collections/workspace/678537dc492047c21fb312ac/slug/new-collection - 404","method":"GET","statusCode":404,"timestamp":"2025-08-04 07:36:16","url":"/collections/workspace/678537dc492047c21fb312ac/slug/new-collection"}
+{"level":"info","message":"Retrying Redis connection (attempt 1) after 100ms","timestamp":"2025-08-04 07:39:41"}
+{"level":"info","message":"Successfully connected to Redis","timestamp":"2025-08-04 07:39:41"}
+{"level":"info","message":"Redis client is ready","timestamp":"2025-08-04 07:39:41"}
+{"level":"info","message":"Retrying Redis connection (attempt 1) after 100ms","timestamp":"2025-08-04 07:49:41"}
+{"level":"info","message":"Successfully connected to Redis","timestamp":"2025-08-04 07:49:42"}
+{"level":"info","message":"Redis client is ready","timestamp":"2025-08-04 07:49:42"}
+{"level":"info","message":"Server is running on port 6700","timestamp":"2025-08-04 07:52:16"}
+{"level":"info","message":"Successfully connected to Redis","timestamp":"2025-08-04 07:52:16"}
+{"level":"info","message":"Redis client is ready","timestamp":"2025-08-04 07:52:16"}
+{"level":"info","message":"Connected to MongoDB","timestamp":"2025-08-04 07:52:18"}
+{"level":"info","message":"Retrying Redis connection (attempt 1) after 100ms","timestamp":"2025-08-04 08:02:16"}
+{"level":"info","message":"Successfully connected to Redis","timestamp":"2025-08-04 08:02:17"}
+{"level":"info","message":"Redis client is ready","timestamp":"2025-08-04 08:02:17"}
+{"level":"info","message":"Retrying Redis connection (attempt 1) after 100ms","timestamp":"2025-08-04 08:12:17"}
+{"level":"info","message":"Successfully connected to Redis","timestamp":"2025-08-04 08:12:17"}
+{"level":"info","message":"Redis client is ready","timestamp":"2025-08-04 08:12:17"}
+{"level":"info","message":"Server is running on port 6700","timestamp":"2025-08-04 08:18:24"}
+{"level":"info","message":"Successfully connected to Redis","timestamp":"2025-08-04 08:18:24"}
+{"level":"info","message":"Redis client is ready","timestamp":"2025-08-04 08:18:25"}
+{"level":"info","message":"Connected to MongoDB","timestamp":"2025-08-04 08:18:26"}
+{"level":"info","message":"Server is running on port 6700","timestamp":"2025-08-04 08:18:34"}
+{"level":"info","message":"Successfully connected to Redis","timestamp":"2025-08-04 08:18:34"}
+{"level":"info","message":"Redis client is ready","timestamp":"2025-08-04 08:18:34"}
+{"level":"info","message":"Connected to MongoDB","timestamp":"2025-08-04 08:18:35"}
+{"level":"info","message":"Server is running on port 6700","timestamp":"2025-08-04 08:18:40"}
+{"level":"info","message":"Successfully connected to Redis","timestamp":"2025-08-04 08:18:40"}
+{"level":"info","message":"Redis client is ready","timestamp":"2025-08-04 08:18:41"}
+{"level":"info","message":"Connected to MongoDB","timestamp":"2025-08-04 08:18:42"}
+{"level":"info","message":"Retrying Redis connection (attempt 1) after 100ms","timestamp":"2025-08-04 08:28:41"}
+{"level":"info","message":"Successfully connected to Redis","timestamp":"2025-08-04 08:28:41"}
+{"level":"info","message":"Redis client is ready","timestamp":"2025-08-04 08:28:41"}
+{"level":"info","message":"Server is running on port 6700","timestamp":"2025-08-04 08:31:02"}
+{"level":"info","message":"Successfully connected to Redis","timestamp":"2025-08-04 08:31:02"}
+{"level":"info","message":"Redis client is ready","timestamp":"2025-08-04 08:31:02"}
+{"level":"info","message":"Connected to MongoDB","timestamp":"2025-08-04 08:31:04"}
+{"level":"info","message":"Server is running on port 6700","timestamp":"2025-08-04 08:31:27"}
+{"level":"info","message":"Successfully connected to Redis","timestamp":"2025-08-04 08:31:27"}
+{"level":"info","message":"Redis client is ready","timestamp":"2025-08-04 08:31:27"}
+{"level":"info","message":"Connected to MongoDB","timestamp":"2025-08-04 08:31:29"}
+{"level":"info","message":"Server is running on port 6700","timestamp":"2025-08-04 08:31:34"}
+{"level":"info","message":"Server is running on port 6700","timestamp":"2025-08-04 08:31:39"}
+{"level":"info","message":"Successfully connected to Redis","timestamp":"2025-08-04 08:31:39"}
+{"level":"info","message":"Redis client is ready","timestamp":"2025-08-04 08:31:39"}
+{"level":"info","message":"Connected to MongoDB","timestamp":"2025-08-04 08:31:41"}
+{"level":"info","message":"Server is running on port 6700","timestamp":"2025-08-04 08:31:44"}
+{"level":"info","message":"Successfully connected to Redis","timestamp":"2025-08-04 08:31:44"}
+{"level":"info","message":"Redis client is ready","timestamp":"2025-08-04 08:31:45"}
+{"level":"info","message":"Connected to MongoDB","timestamp":"2025-08-04 08:31:46"}
+{"level":"info","message":"Server is running on port 6700","timestamp":"2025-08-04 08:31:49"}
+{"level":"info","message":"Successfully connected to Redis","timestamp":"2025-08-04 08:31:49"}
+{"level":"info","message":"Redis client is ready","timestamp":"2025-08-04 08:31:49"}
+{"level":"info","message":"Connected to MongoDB","timestamp":"2025-08-04 08:31:51"}
+{"level":"info","message":"Retrying Redis connection (attempt 1) after 100ms","timestamp":"2025-08-04 08:41:49"}
+{"level":"info","message":"Successfully connected to Redis","timestamp":"2025-08-04 08:41:50"}
+{"level":"info","message":"Redis client is ready","timestamp":"2025-08-04 08:41:50"}
+{"level":"info","message":"Server is running on port 6700","timestamp":"2025-08-04 08:45:03"}
+{"level":"info","message":"Successfully connected to Redis","timestamp":"2025-08-04 08:45:03"}
+{"level":"info","message":"Redis client is ready","timestamp":"2025-08-04 08:45:03"}
+{"level":"info","message":"Connected to MongoDB","timestamp":"2025-08-04 08:45:05"}
+{"level":"info","message":"Server is running on port 6700","timestamp":"2025-08-04 08:45:16"}
+{"level":"info","message":"Successfully connected to Redis","timestamp":"2025-08-04 08:45:16"}
+{"level":"info","message":"Redis client is ready","timestamp":"2025-08-04 08:45:16"}
+{"level":"info","message":"Connected to MongoDB","timestamp":"2025-08-04 08:45:18"}
+{"level":"info","message":"Server is running on port 6700","timestamp":"2025-08-04 08:46:30"}
+{"level":"info","message":"Successfully connected to Redis","timestamp":"2025-08-04 08:46:30"}
+{"level":"info","message":"Redis client is ready","timestamp":"2025-08-04 08:46:30"}
+{"level":"info","message":"Server is running on port 6700","timestamp":"2025-08-04 08:46:32"}
+{"level":"info","message":"Successfully connected to Redis","timestamp":"2025-08-04 08:46:32"}
+{"level":"info","message":"Redis client is ready","timestamp":"2025-08-04 08:46:32"}
+{"level":"info","message":"Connected to MongoDB","timestamp":"2025-08-04 08:46:34"}
+{"level":"info","message":"Server is running on port 6700","timestamp":"2025-08-04 08:46:47"}
+{"level":"info","message":"Successfully connected to Redis","timestamp":"2025-08-04 08:46:47"}
+{"level":"info","message":"Redis client is ready","timestamp":"2025-08-04 08:46:47"}
+{"level":"info","message":"Connected to MongoDB","timestamp":"2025-08-04 08:46:49"}
+{"level":"info","message":"Server is running on port 6700","timestamp":"2025-08-04 08:46:53"}
+{"level":"info","message":"Successfully connected to Redis","timestamp":"2025-08-04 08:46:53"}
+{"level":"info","message":"Redis client is ready","timestamp":"2025-08-04 08:46:53"}
+{"level":"info","message":"Connected to MongoDB","timestamp":"2025-08-04 08:46:55"}
+{"level":"info","message":"Server is running on port 6700","timestamp":"2025-08-04 08:47:18"}
+{"level":"info","message":"Successfully connected to Redis","timestamp":"2025-08-04 08:47:18"}
+{"level":"info","message":"Redis client is ready","timestamp":"2025-08-04 08:47:18"}
+{"level":"info","message":"Connected to MongoDB","timestamp":"2025-08-04 08:47:20"}
+{"level":"info","message":"Server is running on port 6700","timestamp":"2025-08-04 08:48:01"}
+{"level":"info","message":"Successfully connected to Redis","timestamp":"2025-08-04 08:48:01"}
+{"level":"info","message":"Redis client is ready","timestamp":"2025-08-04 08:48:01"}
+{"level":"info","message":"Connected to MongoDB","timestamp":"2025-08-04 08:48:03"}
+{"level":"info","message":"Server is running on port 6700","timestamp":"2025-08-04 08:48:06"}
+{"level":"info","message":"Successfully connected to Redis","timestamp":"2025-08-04 08:48:06"}
+{"level":"info","message":"Redis client is ready","timestamp":"2025-08-04 08:48:06"}
+{"level":"info","message":"Connected to MongoDB","timestamp":"2025-08-04 08:48:07"}
+{"level":"info","message":"Server is running on port 6700","timestamp":"2025-08-04 08:48:10"}
+{"level":"info","message":"Successfully connected to Redis","timestamp":"2025-08-04 08:48:10"}
+{"level":"info","message":"Redis client is ready","timestamp":"2025-08-04 08:48:10"}
+{"level":"info","message":"Connected to MongoDB","timestamp":"2025-08-04 08:48:11"}
+{"level":"info","message":"Server is running on port 6700","timestamp":"2025-08-04 08:48:35"}
+{"level":"info","message":"Server is running on port 6700","timestamp":"2025-08-04 08:48:36"}
+{"level":"info","message":"Successfully connected to Redis","timestamp":"2025-08-04 08:48:36"}
+{"level":"info","message":"Redis client is ready","timestamp":"2025-08-04 08:48:36"}
+{"level":"info","message":"Connected to MongoDB","timestamp":"2025-08-04 08:48:38"}
+{"level":"info","message":"Server is running on port 6700","timestamp":"2025-08-04 08:49:16"}
+{"level":"info","message":"Successfully connected to Redis","timestamp":"2025-08-04 08:49:16"}
+{"level":"info","message":"Redis client is ready","timestamp":"2025-08-04 08:49:16"}
+{"level":"info","message":"Connected to MongoDB","timestamp":"2025-08-04 08:49:18"}
+{"level":"info","message":"Server is running on port 6700","timestamp":"2025-08-04 08:49:34"}
+{"level":"info","message":"Successfully connected to Redis","timestamp":"2025-08-04 08:49:34"}
+{"level":"info","message":"Redis client is ready","timestamp":"2025-08-04 08:49:34"}
+{"level":"info","message":"Connected to MongoDB","timestamp":"2025-08-04 08:49:36"}
+{"level":"info","message":"Server is running on port 6700","timestamp":"2025-08-04 08:50:01"}
+{"level":"info","message":"Successfully connected to Redis","timestamp":"2025-08-04 08:50:01"}
+{"level":"info","message":"Redis client is ready","timestamp":"2025-08-04 08:50:01"}
+{"level":"info","message":"Connected to MongoDB","timestamp":"2025-08-04 08:50:03"}
+{"level":"info","message":"Server is running on port 6700","timestamp":"2025-08-04 08:50:32"}
+{"level":"info","message":"Server is running on port 6700","timestamp":"2025-08-04 08:50:34"}
+{"level":"info","message":"Successfully connected to Redis","timestamp":"2025-08-04 08:50:34"}
+{"level":"info","message":"Redis client is ready","timestamp":"2025-08-04 08:50:34"}
+{"level":"info","message":"Server is running on port 6700","timestamp":"2025-08-04 08:50:37"}
+{"level":"info","message":"Successfully connected to Redis","timestamp":"2025-08-04 08:50:37"}
+{"level":"info","message":"Redis client is ready","timestamp":"2025-08-04 08:50:37"}
+{"level":"info","message":"Connected to MongoDB","timestamp":"2025-08-04 08:50:39"}
+{"level":"info","message":"Server is running on port 6700","timestamp":"2025-08-04 08:50:44"}
+{"level":"info","message":"Successfully connected to Redis","timestamp":"2025-08-04 08:50:44"}
+{"level":"info","message":"Server is running on port 6700","timestamp":"2025-08-04 08:50:45"}
+{"level":"info","message":"Successfully connected to Redis","timestamp":"2025-08-04 08:50:46"}
+{"level":"info","message":"Redis client is ready","timestamp":"2025-08-04 08:50:46"}
+{"level":"info","message":"Server is running on port 6700","timestamp":"2025-08-04 08:50:48"}
+{"level":"info","message":"Successfully connected to Redis","timestamp":"2025-08-04 08:50:48"}
+{"level":"info","message":"Redis client is ready","timestamp":"2025-08-04 08:50:48"}
+{"level":"info","message":"Connected to MongoDB","timestamp":"2025-08-04 08:50:50"}
+{"level":"info","message":"Server is running on port 6700","timestamp":"2025-08-04 08:51:17"}
+{"level":"info","message":"Successfully connected to Redis","timestamp":"2025-08-04 08:51:17"}
+{"level":"info","message":"Redis client is ready","timestamp":"2025-08-04 08:51:17"}
+{"level":"info","message":"Connected to MongoDB","timestamp":"2025-08-04 08:51:18"}
+{"ip":"::1","level":"info","message":"GET /collections/workspace/678537dc492047c21fb312ac/slug/new-collection","method":"GET","timestamp":"2025-08-04T08:57:49.438Z","url":"/collections/workspace/678537dc492047c21fb312ac/slug/new-collection","userAgent":"PostmanRuntime/7.45.0"}
+{"level":"error","message":"Error: Workspace not found.\nStack: Error: Workspace not found.\n    at createError (/Users/hughestottimeh/Docs/Codes/Lenslyst/lens_server/src/utils/error.ts:7:15)\n    at <anonymous> (/Users/hughestottimeh/Docs/Codes/Lenslyst/lens_server/src/controllers/collection.controller.ts:140:19)\n    at processTicksAndRejections (native:7:39)","timestamp":"2025-08-04 08:57:57"}
+{"duration":"8199ms","ip":"::1","level":"info","message":"GET /collections/workspace/678537dc492047c21fb312ac/slug/new-collection - 404","method":"GET","statusCode":404,"timestamp":"2025-08-04 08:57:57","url":"/collections/workspace/678537dc492047c21fb312ac/slug/new-collection"}
+{"ip":"::1","level":"info","message":"GET /collections/workspace/678537dc492047c21fb312ac/slug/new-collection","method":"GET","timestamp":"2025-08-04T08:58:04.210Z","url":"/collections/workspace/678537dc492047c21fb312ac/slug/new-collection","userAgent":"PostmanRuntime/7.45.0"}
+{"level":"error","message":"Error: Workspace not found.\nStack: Error: Workspace not found.\n    at createError (/Users/hughestottimeh/Docs/Codes/Lenslyst/lens_server/src/utils/error.ts:7:15)\n    at <anonymous> (/Users/hughestottimeh/Docs/Codes/Lenslyst/lens_server/src/controllers/collection.controller.ts:140:19)\n    at processTicksAndRejections (native:7:39)","timestamp":"2025-08-04 08:58:04"}
+{"duration":"190ms","ip":"::1","level":"info","message":"GET /collections/workspace/678537dc492047c21fb312ac/slug/new-collection - 404","method":"GET","statusCode":404,"timestamp":"2025-08-04 08:58:04","url":"/collections/workspace/678537dc492047c21fb312ac/slug/new-collection"}
+{"ip":"::1","level":"info","message":"GET /files/new-collection","method":"GET","timestamp":"2025-08-04T08:58:28.436Z","url":"/files/new-collection","userAgent":"PostmanRuntime/7.45.0"}
+{"level":"error","message":"Error: No watermarked files found for this collection in the specified workspace.\nStack: Error: No watermarked files found for this collection in the specified workspace.\n    at createError (/Users/hughestottimeh/Docs/Codes/Lenslyst/lens_server/src/utils/error.ts:7:15)\n    at <anonymous> (/Users/hughestottimeh/Docs/Codes/Lenslyst/lens_server/src/controllers/file.controller.ts:112:11)\n    at processTicksAndRejections (native:7:39)","timestamp":"2025-08-04 08:58:28"}
+{"duration":"368ms","ip":"::1","level":"info","message":"GET /files/new-collection - 404","method":"GET","statusCode":404,"timestamp":"2025-08-04 08:58:28","url":"/files/new-collection"}
+{"ip":"::1","level":"info","message":"GET /files/new-collection","method":"GET","timestamp":"2025-08-04T08:58:34.322Z","url":"/files/new-collection","userAgent":"PostmanRuntime/7.45.0"}
+{"level":"error","message":"Error: No watermarked files found for this collection in the specified workspace.\nStack: Error: No watermarked files found for this collection in the specified workspace.\n    at createError (/Users/hughestottimeh/Docs/Codes/Lenslyst/lens_server/src/utils/error.ts:7:15)\n    at <anonymous> (/Users/hughestottimeh/Docs/Codes/Lenslyst/lens_server/src/controllers/file.controller.ts:112:11)\n    at processTicksAndRejections (native:7:39)","timestamp":"2025-08-04 08:58:34"}
+{"duration":"386ms","ip":"::1","level":"info","message":"GET /files/new-collection - 404","method":"GET","statusCode":404,"timestamp":"2025-08-04 08:58:34","url":"/files/new-collection"}
+{"ip":"::1","level":"info","message":"GET /files/new-collection","method":"GET","timestamp":"2025-08-04T08:59:25.305Z","url":"/files/new-collection","userAgent":"PostmanRuntime/7.45.0"}
+{"level":"error","message":"Error: No watermarked files found for this collection in the specified workspace.\nStack: Error: No watermarked files found for this collection in the specified workspace.\n    at createError (/Users/hughestottimeh/Docs/Codes/Lenslyst/lens_server/src/utils/error.ts:7:15)\n    at <anonymous> (/Users/hughestottimeh/Docs/Codes/Lenslyst/lens_server/src/controllers/file.controller.ts:112:11)\n    at processTicksAndRejections (native:7:39)","timestamp":"2025-08-04 08:59:25"}
+{"duration":"395ms","ip":"::1","level":"info","message":"GET /files/new-collection - 404","method":"GET","statusCode":404,"timestamp":"2025-08-04 08:59:25","url":"/files/new-collection"}
+{"ip":"::1","level":"info","message":"GET /originals/files/new-collection","method":"GET","timestamp":"2025-08-04T08:59:45.322Z","url":"/originals/files/new-collection","userAgent":"PostmanRuntime/7.45.0"}
+{"duration":"4ms","ip":"::1","level":"info","message":"GET /originals/files/new-collection - 404","method":"GET","statusCode":404,"timestamp":"2025-08-04 08:59:45","url":"/originals/files/new-collection"}
+{"ip":"::1","level":"info","message":"GET /originals/files/new-collection","method":"GET","timestamp":"2025-08-04T08:59:47.532Z","url":"/originals/files/new-collection","userAgent":"PostmanRuntime/7.45.0"}
+{"duration":"1ms","ip":"::1","level":"info","message":"GET /originals/files/new-collection - 404","method":"GET","statusCode":404,"timestamp":"2025-08-04 08:59:47","url":"/originals/files/new-collection"}
+{"ip":"::1","level":"info","message":"GET /original/files/new-collection","method":"GET","timestamp":"2025-08-04T08:59:54.565Z","url":"/original/files/new-collection","userAgent":"PostmanRuntime/7.45.0"}
+{"duration":"2ms","ip":"::1","level":"info","message":"GET /original/files/new-collection - 404","method":"GET","statusCode":404,"timestamp":"2025-08-04 08:59:54","url":"/original/files/new-collection"}
+{"level":"info","message":"Retrying Redis connection (attempt 1) after 100ms","timestamp":"2025-08-04 09:01:17"}
+{"level":"info","message":"Successfully connected to Redis","timestamp":"2025-08-04 09:01:17"}
+{"level":"info","message":"Redis client is ready","timestamp":"2025-08-04 09:01:17"}
+{"ip":"::1","level":"info","message":"GET /files/original/new-collection","method":"GET","timestamp":"2025-08-04T09:01:37.806Z","url":"/files/original/new-collection","userAgent":"PostmanRuntime/7.45.0"}
+{"duration":"385ms","ip":"::1","level":"info","message":"GET /files/original/new-collection - 200","method":"GET","statusCode":200,"timestamp":"2025-08-04 09:01:38","url":"/files/original/new-collection"}
+{"ip":"::1","level":"info","message":"GET /collections/678f8fff5c06592bebf91085","method":"GET","timestamp":"2025-08-04T09:03:13.170Z","url":"/collections/678f8fff5c06592bebf91085","userAgent":"PostmanRuntime/7.45.0"}
+{"level":"info","message":{"__v":0,"_id":"678f8fff5c06592bebf91085","coverPhotoKey":"photos/collections/1738717356210-454263364.jpg","createdAt":"2025-01-21T12:15:59.113Z","creatorId":"678537c9492047c21fb312a7","description":"","isPublished":true,"name":"New Collection","noOfFiles":12,"slug":"new-collection","template":"classic","url":"http://localhost:3000/photos/678537dc492047c21fb312ac/new-collection","watermarkConfig":{"alignment":"northwest","amount":0,"createdAt":"2025-08-04T07:19:34.629Z","imageKey":"watermarks/678f8fff5c06592bebf91085-1754291974075.png","opacity":0.4,"previewMode":"watermarked","requirePayment":false,"rotation":60,"size":0.1,"text":"Lenslyst","textColor":"#ffffff","tileType":"grid","type":"image","updatedAt":"2025-08-04T07:19:34.629Z"},"watermarkProgress":{"completedAt":"2025-08-04T07:19:42.748Z","estimatedTimeRemaining":0,"locked":false,"queuedAt":"2025-08-04T07:19:34.445Z","startedAt":"2025-08-04T07:19:34.594Z","status":"completed","total":12,"watermarked":12},"workspaceId":"678537dc492047c21fb312ac"},"timestamp":"2025-08-04 09:03:13"}
+{"duration":"401ms","ip":"::1","level":"info","message":"GET /collections/678f8fff5c06592bebf91085 - 200","method":"GET","statusCode":200,"timestamp":"2025-08-04 09:03:13","url":"/collections/678f8fff5c06592bebf91085"}
+{"ip":"::1","level":"info","message":"GET /collections/678f8fff5c06592bebf91085","method":"GET","timestamp":"2025-08-04T09:03:30.083Z","url":"/collections/678f8fff5c06592bebf91085","userAgent":"PostmanRuntime/7.45.0"}
+{"level":"info","message":{"__v":0,"_id":"678f8fff5c06592bebf91085","coverPhotoKey":"photos/collections/1738717356210-454263364.jpg","createdAt":"2025-01-21T12:15:59.113Z","creatorId":"678537c9492047c21fb312a7","description":"","isPublished":true,"name":"New Collection","noOfFiles":12,"slug":"new-collection","template":"classic","url":"http://localhost:3000/photos/678537dc492047c21fb312ac/new-collection","watermarkConfig":{"alignment":"northwest","amount":0,"createdAt":"2025-08-04T07:19:34.629Z","imageKey":"watermarks/678f8fff5c06592bebf91085-1754291974075.png","opacity":0.4,"previewMode":"watermarked","requirePayment":false,"rotation":60,"size":0.1,"text":"Lenslyst","textColor":"#ffffff","tileType":"grid","type":"image","updatedAt":"2025-08-04T07:19:34.629Z"},"watermarkProgress":{"completedAt":"2025-08-04T07:19:42.748Z","estimatedTimeRemaining":0,"locked":false,"queuedAt":"2025-08-04T07:19:34.445Z","startedAt":"2025-08-04T07:19:34.594Z","status":"completed","total":12,"watermarked":12},"workspaceId":"678537dc492047c21fb312ac"},"timestamp":"2025-08-04 09:03:30"}
+{"duration":"350ms","ip":"::1","level":"info","message":"GET /collections/678f8fff5c06592bebf91085 - 200","method":"GET","statusCode":200,"timestamp":"2025-08-04 09:03:30","url":"/collections/678f8fff5c06592bebf91085"}
+{"ip":"::1","level":"info","message":"POST /collections/678f8fff5c06592bebf91085/watermark","method":"POST","timestamp":"2025-08-04T09:04:29.030Z","url":"/collections/678f8fff5c06592bebf91085/watermark","userAgent":"PostmanRuntime/7.45.0"}
+{"duration":"2ms","ip":"::1","level":"info","message":"POST /collections/678f8fff5c06592bebf91085/watermark - 400","method":"POST","statusCode":400,"timestamp":"2025-08-04 09:04:29","url":"/collections/678f8fff5c06592bebf91085/watermark"}
+{"ip":"::1","level":"info","message":"POST /collections/678f8fff5c06592bebf91085/watermark","method":"POST","timestamp":"2025-08-04T09:05:03.339Z","url":"/collections/678f8fff5c06592bebf91085/watermark","userAgent":"PostmanRuntime/7.45.0"}
+{"level":"error","message":"Error: Watermark image is required\nStack: Error: Watermark image is required\n    at createError (/Users/hughestottimeh/Docs/Codes/Lenslyst/lens_server/src/utils/error.ts:7:15)\n    at <anonymous> (/Users/hughestottimeh/Docs/Codes/Lenslyst/lens_server/src/controllers/collection.controller.ts:429:21)\n    at processTicksAndRejections (native:7:39)","timestamp":"2025-08-04 09:05:03"}
+{"duration":"189ms","ip":"::1","level":"info","message":"POST /collections/678f8fff5c06592bebf91085/watermark - 400","method":"POST","statusCode":400,"timestamp":"2025-08-04 09:05:03","url":"/collections/678f8fff5c06592bebf91085/watermark"}
+{"ip":"::1","level":"info","message":"POST /collections/678f8fff5c06592bebf91085/watermark","method":"POST","timestamp":"2025-08-04T09:05:15.246Z","url":"/collections/678f8fff5c06592bebf91085/watermark","userAgent":"PostmanRuntime/7.45.0"}
+{"level":"info","message":"Collection 678f8fff5c06592bebf91085 added to watermark queue at position undefined","timestamp":"2025-08-04 09:05:16"}
+{"duration":"1367ms","ip":"::1","level":"info","message":"POST /collections/678f8fff5c06592bebf91085/watermark - 200","method":"POST","statusCode":200,"timestamp":"2025-08-04 09:05:16","url":"/collections/678f8fff5c06592bebf91085/watermark"}
+{"ip":"::1","level":"info","message":"GET /collections/678f8fff5c06592bebf91085","method":"GET","timestamp":"2025-08-04T09:05:22.713Z","url":"/collections/678f8fff5c06592bebf91085","userAgent":"PostmanRuntime/7.45.0"}
+{"level":"info","message":{"__v":0,"_id":"678f8fff5c06592bebf91085","coverPhotoKey":"photos/collections/1738717356210-454263364.jpg","createdAt":"2025-01-21T12:15:59.113Z","creatorId":"678537c9492047c21fb312a7","description":"","isPublished":true,"name":"New Collection","noOfFiles":12,"slug":"new-collection","template":"classic","url":"http://localhost:3000/photos/678537dc492047c21fb312ac/new-collection","watermarkConfig":{"alignment":"northwest","amount":0,"createdAt":"2025-08-04T09:05:17.245Z","opacity":0.4,"previewMode":"watermarked","requirePayment":false,"rotation":60,"size":0.1,"text":"Lenslyst","textColor":"#ffffff","tileType":"grid","type":"text","updatedAt":"2025-08-04T09:05:17.245Z"},"watermarkProgress":{"currentImageName":"Processing batch 1/3","locked":true,"queuedAt":"2025-08-04T09:05:16.112Z","startedAt":"2025-08-04T09:05:17.065Z","status":"processing","total":12,"watermarked":0},"workspaceId":"678537dc492047c21fb312ac"},"timestamp":"2025-08-04 09:05:23"}
+{"duration":"349ms","ip":"::1","level":"info","message":"GET /collections/678f8fff5c06592bebf91085 - 200","method":"GET","statusCode":200,"timestamp":"2025-08-04 09:05:23","url":"/collections/678f8fff5c06592bebf91085"}
+{"ip":"::1","level":"info","message":"POST /collections/678f8fff5c06592bebf91085/watermark","method":"POST","timestamp":"2025-08-04T09:05:29.358Z","url":"/collections/678f8fff5c06592bebf91085/watermark","userAgent":"PostmanRuntime/7.45.0"}
+{"duration":"180ms","ip":"::1","level":"info","message":"POST /collections/678f8fff5c06592bebf91085/watermark - 200","method":"POST","statusCode":200,"timestamp":"2025-08-04 09:05:29","url":"/collections/678f8fff5c06592bebf91085/watermark"}
+{"ip":"::1","level":"info","message":"POST /collections/678f8fff5c06592bebf91085/watermark","method":"POST","timestamp":"2025-08-04T09:06:03.003Z","url":"/collections/678f8fff5c06592bebf91085/watermark","userAgent":"PostmanRuntime/7.45.0"}
+{"level":"info","message":"Collection 678f8fff5c06592bebf91085 added to watermark queue at position undefined","timestamp":"2025-08-04 09:06:03"}
+{"duration":"659ms","ip":"::1","level":"info","message":"POST /collections/678f8fff5c06592bebf91085/watermark - 200","method":"POST","statusCode":200,"timestamp":"2025-08-04 09:06:03","url":"/collections/678f8fff5c06592bebf91085/watermark"}
+{"ip":"::1","level":"info","message":"POST /collections/678f8fff5c06592bebf91085/watermark","method":"POST","timestamp":"2025-08-04T09:06:13.180Z","url":"/collections/678f8fff5c06592bebf91085/watermark","userAgent":"PostmanRuntime/7.45.0"}
+{"duration":"192ms","ip":"::1","level":"info","message":"POST /collections/678f8fff5c06592bebf91085/watermark - 200","method":"POST","statusCode":200,"timestamp":"2025-08-04 09:06:13","url":"/collections/678f8fff5c06592bebf91085/watermark"}
+{"ip":"::1","level":"info","message":"POST /collections/678f8fff5c06592bebf91085/watermark","method":"POST","timestamp":"2025-08-04T09:06:14.846Z","url":"/collections/678f8fff5c06592bebf91085/watermark","userAgent":"PostmanRuntime/7.45.0"}
+{"duration":"399ms","ip":"::1","level":"info","message":"POST /collections/678f8fff5c06592bebf91085/watermark - 200","method":"POST","statusCode":200,"timestamp":"2025-08-04 09:06:15","url":"/collections/678f8fff5c06592bebf91085/watermark"}
+{"ip":"::1","level":"info","message":"GET /files/original/new-collection","method":"GET","timestamp":"2025-08-04T09:09:57.281Z","url":"/files/original/new-collection","userAgent":"PostmanRuntime/7.45.0"}
+{"duration":"375ms","ip":"::1","level":"info","message":"GET /files/original/new-collection - 200","method":"GET","statusCode":200,"timestamp":"2025-08-04 09:09:57","url":"/files/original/new-collection"}
+{"ip":"::1","level":"info","message":"POST /collections/678f8fff5c06592bebf91085/watermark","method":"POST","timestamp":"2025-08-04T09:10:45.524Z","url":"/collections/678f8fff5c06592bebf91085/watermark","userAgent":"PostmanRuntime/7.45.0"}
+{"level":"info","message":"Collection 678f8fff5c06592bebf91085 added to watermark queue at position undefined","timestamp":"2025-08-04 09:10:46"}
+{"duration":"652ms","ip":"::1","level":"info","message":"POST /collections/678f8fff5c06592bebf91085/watermark - 200","method":"POST","statusCode":200,"timestamp":"2025-08-04 09:10:46","url":"/collections/678f8fff5c06592bebf91085/watermark"}
+{"level":"info","message":"Retrying Redis connection (attempt 1) after 100ms","timestamp":"2025-08-04 09:20:46"}
+{"level":"info","message":"Successfully connected to Redis","timestamp":"2025-08-04 09:20:46"}
+{"level":"info","message":"Redis client is ready","timestamp":"2025-08-04 09:20:46"}
+{"ip":"::1","level":"info","message":"POST /collections/678f8fff5c06592bebf91085/watermark","method":"POST","timestamp":"2025-08-04T09:22:11.379Z","url":"/collections/678f8fff5c06592bebf91085/watermark","userAgent":"PostmanRuntime/7.45.0"}
+{"level":"info","message":"Collection 678f8fff5c06592bebf91085 added to watermark queue at position undefined","timestamp":"2025-08-04 09:22:12"}
+{"duration":"638ms","ip":"::1","level":"info","message":"POST /collections/678f8fff5c06592bebf91085/watermark - 200","method":"POST","statusCode":200,"timestamp":"2025-08-04 09:22:12","url":"/collections/678f8fff5c06592bebf91085/watermark"}
+{"ip":"::1","level":"info","message":"POST /collections/678f8fff5c06592bebf91085/watermark","method":"POST","timestamp":"2025-08-04T09:23:27.403Z","url":"/collections/678f8fff5c06592bebf91085/watermark","userAgent":"PostmanRuntime/7.45.0"}
+{"level":"info","message":"Collection 678f8fff5c06592bebf91085 added to watermark queue at position undefined","timestamp":"2025-08-04 09:23:28"}
+{"duration":"626ms","ip":"::1","level":"info","message":"POST /collections/678f8fff5c06592bebf91085/watermark - 200","method":"POST","statusCode":200,"timestamp":"2025-08-04 09:23:28","url":"/collections/678f8fff5c06592bebf91085/watermark"}
+{"level":"info","message":"Retrying Redis connection (attempt 1) after 100ms","timestamp":"2025-08-04 09:33:27"}
+{"level":"info","message":"Successfully connected to Redis","timestamp":"2025-08-04 09:33:28"}
+{"level":"info","message":"Redis client is ready","timestamp":"2025-08-04 09:33:28"}
+{"level":"info","message":"Retrying Redis connection (attempt 1) after 100ms","timestamp":"2025-08-04 09:43:28"}
+{"level":"info","message":"Successfully connected to Redis","timestamp":"2025-08-04 09:43:28"}
+{"level":"info","message":"Redis client is ready","timestamp":"2025-08-04 09:43:28"}
+{"level":"info","message":"Retrying Redis connection (attempt 1) after 100ms","timestamp":"2025-08-04 09:53:28"}
+{"level":"info","message":"Successfully connected to Redis","timestamp":"2025-08-04 09:53:28"}
+{"level":"info","message":"Redis client is ready","timestamp":"2025-08-04 09:53:29"}
+{"level":"info","message":"Retrying Redis connection (attempt 1) after 100ms","timestamp":"2025-08-04 10:03:29"}
+{"level":"info","message":"Successfully connected to Redis","timestamp":"2025-08-04 10:03:29"}
+{"level":"info","message":"Redis client is ready","timestamp":"2025-08-04 10:03:29"}
+{"level":"info","message":"Retrying Redis connection (attempt 1) after 100ms","timestamp":"2025-08-04 10:13:29"}
+{"level":"info","message":"Successfully connected to Redis","timestamp":"2025-08-04 10:13:29"}
+{"level":"info","message":"Redis client is ready","timestamp":"2025-08-04 10:13:30"}
+{"level":"info","message":"Retrying Redis connection (attempt 1) after 100ms","timestamp":"2025-08-04 10:23:30"}
+{"level":"info","message":"Successfully connected to Redis","timestamp":"2025-08-04 10:23:30"}
+{"level":"info","message":"Redis client is ready","timestamp":"2025-08-04 10:23:30"}
+{"ip":"::1","level":"info","message":"POST /collections/678f8fff5c06592bebf91085/watermark","method":"POST","timestamp":"2025-08-04T10:29:05.305Z","url":"/collections/678f8fff5c06592bebf91085/watermark","userAgent":"PostmanRuntime/7.45.0"}
+{"level":"info","message":"Collection 678f8fff5c06592bebf91085 added to watermark queue at position undefined","timestamp":"2025-08-04 10:29:06"}
+{"duration":"714ms","ip":"::1","level":"info","message":"POST /collections/678f8fff5c06592bebf91085/watermark - 200","method":"POST","statusCode":200,"timestamp":"2025-08-04 10:29:06","url":"/collections/678f8fff5c06592bebf91085/watermark"}
+{"ip":"::1","level":"info","message":"POST /collections/678f8fff5c06592bebf91085/watermark","method":"POST","timestamp":"2025-08-04T10:30:33.174Z","url":"/collections/678f8fff5c06592bebf91085/watermark","userAgent":"PostmanRuntime/7.45.0"}
+{"level":"info","message":"Collection 678f8fff5c06592bebf91085 added to watermark queue at position undefined","timestamp":"2025-08-04 10:30:33"}
+{"duration":"748ms","ip":"::1","level":"info","message":"POST /collections/678f8fff5c06592bebf91085/watermark - 200","method":"POST","statusCode":200,"timestamp":"2025-08-04 10:30:33","url":"/collections/678f8fff5c06592bebf91085/watermark"}
+{"level":"info","message":"Retrying Redis connection (attempt 1) after 100ms","timestamp":"2025-08-04 10:40:33"}
+{"level":"info","message":"Successfully connected to Redis","timestamp":"2025-08-04 10:40:34"}
+{"level":"info","message":"Redis client is ready","timestamp":"2025-08-04 10:40:34"}
+{"ip":"::1","level":"info","message":"GET /files/new-collection","method":"GET","timestamp":"2025-08-04T10:41:12.700Z","url":"/files/new-collection","userAgent":"PostmanRuntime/7.45.0"}
+{"duration":"419ms","ip":"::1","level":"info","message":"GET /files/new-collection - 200","method":"GET","statusCode":200,"timestamp":"2025-08-04 10:41:13","url":"/files/new-collection"}
+{"ip":"::1","level":"info","message":"GET /files/new-collection","method":"GET","timestamp":"2025-08-04T10:41:19.987Z","url":"/files/new-collection","userAgent":"PostmanRuntime/7.45.0"}
+{"duration":"374ms","ip":"::1","level":"info","message":"GET /files/new-collection - 200","method":"GET","statusCode":200,"timestamp":"2025-08-04 10:41:20","url":"/files/new-collection"}

@@ -412,7 +412,7 @@ export const updateWatermarkConfig = async (
     }
 
     // Check if collection can be queued (not already in progress)
-    if (!collection.canBeQueued()) {
+    if (!collection.canBeQueued() || collection.isWatermarkProgressLocked()) {
       return res.status(200).json({
         success: true,
         message: `Watermark processing is already ${collection.watermarkProgress?.status}. Please wait for completion or cancellation.`,
@@ -445,6 +445,9 @@ export const updateWatermarkConfig = async (
       }
 
       try {
+        // collection.lockWatermarkProgress();
+        // await collection.save();
+
         const folder = "watermarks";
         newFileKey = `${folder}/${collectionId}-${Date.now()}${path.extname(
           file.originalname
@@ -531,6 +534,11 @@ export const updateWatermarkConfig = async (
 
     // Get queue position
     const queuePosition = await getQueuePosition(collectionId);
+
+    if (queuePosition) {
+      collection.lockWatermarkProgress();
+      await collection.save();
+    }
 
     logger.info(
       `Collection ${collectionId} added to watermark queue at position ${queuePosition}`
