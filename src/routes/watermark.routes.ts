@@ -31,13 +31,13 @@ router.get("/:collectionId/watermark-progress", getCollectionWatermarkProgress);
 
 router.get("/:collectionId/cancel-watermark", verifyToken, cancelWatermarkJob);
 
-router.delete(
+router.get(
   "/:collectionId/check-and-remove-queue",
   //   verifyToken,
   checkAndRemoveQueuedWatermark
 );
 
-router.delete(
+router.get(
   "/workspace/:workspaceId/remove-all-queued",
   //   verifyToken,
   removeAllQueuedWatermarks

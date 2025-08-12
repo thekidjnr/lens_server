@@ -13,8 +13,11 @@ import { WatermarkConfigSchema } from "../utils/watermark/watermark.dto";
 import { redis } from "../utils/common/queue";
 import logger from "../utils/common/logger";
 import { processImageWithWatermark } from "../utils/watermark/watermark.proccessor";
-import { MAX_FILE_SIZE, getQueuePosition, removeFromQueue } from "../utils/watermark/watermark.handler";
-
+import {
+  MAX_FILE_SIZE,
+  getQueuePosition,
+  removeFromQueue,
+} from "../utils/watermark/watermark.handler";
 
 export const cancelWatermarkJob = async (
   req: Request,
@@ -77,7 +80,7 @@ export const checkAndRemoveQueuedWatermark = async (
       return res.status(200).json({
         inQueue: false,
         message: "Collection is not in watermark queue",
-        currentStatus: progress?.status || "idle"
+        currentStatus: progress?.status || "idle",
       });
     }
 
@@ -117,17 +120,17 @@ export const removeAllQueuedWatermarks = async (
 
     const queuedCollections = await Collection.find({
       workspaceId,
-      "watermarkProgress.status": "queued"
+      "watermarkProgress.status": "queued",
     });
 
     const removedCollections = [];
 
     for (const collection of queuedCollections) {
       const collectionId = (collection._id as string).toString();
-      
+
       await removeFromQueue(collectionId);
-      
-    //   const progress = collection.watermarkProgress;
+
+      //   const progress = collection.watermarkProgress;
       collection.setWatermarkProgress({
         total: 0,
         watermarked: 0,
@@ -135,12 +138,12 @@ export const removeAllQueuedWatermarks = async (
         queuedAt: undefined,
         locked: false,
       });
-      
+
       await collection.save();
-      
+
       removedCollections.push({
         collectionId,
-        collectionName: collection.name
+        collectionName: collection.name,
       });
     }
 
@@ -148,7 +151,7 @@ export const removeAllQueuedWatermarks = async (
       message: `Removed ${removedCollections.length} watermark jobs from queue`,
       workspaceId,
       removedCount: removedCollections.length,
-      removedCollections
+      removedCollections,
     });
   } catch (error) {
     next(error);
@@ -295,7 +298,7 @@ export const updateWatermarkConfig = async (
     collection.setWatermarkProgress({
       total: 0,
       watermarked: 0,
-      status: "idle",
+      status: "queued",
       queuedAt: undefined,
       locked: false,
     });
