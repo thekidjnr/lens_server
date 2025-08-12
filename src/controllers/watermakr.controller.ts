@@ -173,10 +173,18 @@ export const updateWatermarkConfig = async (
       return;
     }
 
+    // Parse the config first
+    let parsedConfig = file
+      ? JSON.parse(watermarkConfigRaw)
+      : watermarkConfigRaw;
+
+    // Check if text is empty and set default value
+    if (!parsedConfig.text || parsedConfig.text.trim() === "") {
+      parsedConfig.text = "lenslyst";
+    }
+
     // Validate request body against schema
-    const validationResult = file
-      ? WatermarkConfigSchema.safeParse(JSON.parse(watermarkConfigRaw))
-      : WatermarkConfigSchema.safeParse(watermarkConfigRaw);
+    const validationResult = WatermarkConfigSchema.safeParse(parsedConfig);
 
     if (!validationResult.success) {
       return next(
