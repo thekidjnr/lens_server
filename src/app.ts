@@ -11,10 +11,11 @@ dotenv.config();
 import authRoute from "./routes/auth.routes";
 import userRoute from "./routes/user.routes";
 import collectionRoute from "./routes/collection.routes";
+import watermarkRoute from "./routes/watermark.routes";
 import fileRoute from "./routes/file.routes";
 import workspaceRoute from "./routes/workspace.routes";
 import s3Route from "./routes/s3.routes";
-import logger from "./utils/logger";
+import logger from "./utils/common/logger";
 
 const app: Express = express();
 const httpServer = createServer(app);
@@ -96,6 +97,7 @@ app.use("/auth", authRoute);
 app.use("/user", userRoute);
 app.use("/workspace", workspaceRoute);
 app.use("/collections", collectionRoute);
+app.use("/collections", watermarkRoute);
 app.use("/files", fileRoute);
 app.use("/s3", s3Route);
 

@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import bcrypt from "bcryptjs";
-import { createError } from "../utils/error";
+import { createError } from "../utils/common/error";
 import { User } from "../models/user.model";
 import jwt from "jsonwebtoken";
 import nodemailer from "nodemailer";

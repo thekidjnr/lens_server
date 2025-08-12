@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { File } from "../models/file.model";
-import { createError } from "../utils/error";
+import { createError } from "../utils/common/error";
 import mongoose from "mongoose";
 import { Collection } from "../models/collection.model";
 import { Workspace } from "../models/workspace.model";

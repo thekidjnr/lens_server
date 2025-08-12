@@ -1,10 +1,10 @@
 import { Request, Response, NextFunction } from "express";
 import { Workspace } from "../models/workspace.model";
 import { User } from "../models/user.model";
-import { createError } from "../utils/error";
+import { createError } from "../utils/common/error";
 import mongoose from "mongoose";
 import { deleteFileFromS3 } from "./s3.controller";
-import logger from "../utils/logger";
+import logger from "../utils/common/logger";
 
 export const createWorkspace = async (
   req: Request,

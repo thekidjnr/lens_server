@@ -1,5 +1,5 @@
 import express from "express";
-import { upload } from "../utils/multer";
+import { upload } from "../utils/common/multer";
 import { uploadFiles } from "../controllers/s3.controller";
 
 const router = express.Router();
