@@ -106,7 +106,7 @@ const collectionSchema = new Schema<ICollection>({
     type: {
       type: String,
       enum: ["text", "image"],
-      required: true,
+      // required: true,
     },
     text: { type: String },
     imageKey: { type: String },
