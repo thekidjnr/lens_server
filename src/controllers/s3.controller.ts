@@ -1,8 +1,8 @@
 import { NextFunction, Request, Response } from "express";
-import { createError } from "../utils/error";
+import { createError } from "../utils/common/error";
 import path from "path";
 import { DeleteObjectCommand, S3Client } from "@aws-sdk/client-s3";
-import { allowedMimeTypes, uploadToS3 } from "../utils/s3";
+import { allowedMimeTypes, uploadToS3 } from "../utils/common/s3";
 import { CloudFrontClient } from "@aws-sdk/client-cloudfront";
 
 // Initialize the AWS S3 client

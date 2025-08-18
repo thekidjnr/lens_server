@@ -1,10 +1,15 @@
 import { Request, Response, NextFunction } from "express";
-import { Collection } from "../models/collection.model";
-import { createError } from "../utils/error";
+import {
+  Collection,
+} from "../models/collection.model";
+import { createError } from "../utils/common/error";
 import { Workspace } from "../models/workspace.model";
 import slugify from "slugify";
 import { deleteFileFromS3 } from "./s3.controller";
 import { File } from "../models/file.model";
+import logger from "../utils/common/logger";
+import { WatermarkedFile } from "../models/watermarkedfile.model";
+import { removeFromQueue } from "../utils/watermark/watermark.handler";
 
 export const createCollection = async (
   req: Request,
@@ -138,6 +143,10 @@ export const getCollectionBySlug = async (
       return next(createError(404, "Collection not found."));
     }
 
+    if (!collection) {
+      return next(createError(404, "Collection not found."));
+    }
+
     const collectionData = collection.toObject();
 
     const url = `${process.env.PREVIEW_URL}/${workspace.slug}/${slug}`;
@@ -149,7 +158,39 @@ export const getCollectionBySlug = async (
       workspaceName: workspace.name,
     };
 
-    console.log(response);
+    logger.info(response);
+    res.status(200).json(response);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getCollectionById = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const { id } = req.params;
+
+  try {
+    // Find collection by ID
+    const collection = await Collection.findById(id);
+    if (!collection) {
+      return next(createError(404, "Collection not found."));
+    }
+
+    // Find all watermarked images of the collection
+    const watermarked = await WatermarkedFile.find({
+      collectionId: collection._id,
+    });
+
+    const collectionData = collection.toObject();
+
+    const response = {
+      ...collectionData,
+    };
+
+    logger.info(response);
     res.status(200).json(response);
   } catch (error) {
     next(error);
@@ -199,6 +240,16 @@ export const deleteCollection = async (
       return next(createError(404, "Collection not found."));
     }
 
+    // Check if collection is currently in progress
+    if (collection.isInProgress()) {
+      return next(
+        createError(
+          400,
+          "Cannot delete collection while watermark processing is in progress"
+        )
+      );
+    }
+
     const files = await File.find({ collectionSlug: collection.slug });
 
     for (const file of files) {
@@ -223,9 +274,12 @@ export const deleteCollection = async (
 
         await File.findByIdAndDelete(file._id);
       } catch (err) {
-        console.error(`Error deleting file ${file._id}:`, err);
+        logger.error(`Error deleting file ${file._id}:`, err);
       }
     }
+
+    // Remove from queue if it's there
+    await removeFromQueue(collectionId);
 
     await Collection.findByIdAndDelete(collectionId);
 

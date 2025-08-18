@@ -19,6 +19,7 @@
 .env.development.local
 .env.test.local
 .env.production.local
+/bun.lock
 /dist
 /.aws-sam
 
@@ -30,3 +31,5 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .env.docker
+
+/logs

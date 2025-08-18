@@ -1,11 +1,12 @@
 import { NextFunction, Request, Response } from "express";
 import { File } from "../models/file.model";
-import { createError } from "../utils/error";
+import { createError } from "../utils/common/error";
 import mongoose from "mongoose";
 import { Collection } from "../models/collection.model";
 import { Workspace } from "../models/workspace.model";
 import { getSignedUrl } from "@aws-sdk/cloudfront-signer";
 import { deleteFileFromS3 } from "./s3.controller";
+import { WatermarkedFile } from "../models/watermarkedfile.model";
 
 export const addFileToCollection = async (
   req: Request,
@@ -82,6 +83,7 @@ export const addFileToCollection = async (
   }
 };
 
+// Endpoint 1: Smart fetching based on watermark configuration
 export const getFilesByCollection = async (
   req: Request,
   res: Response,
@@ -98,6 +100,26 @@ export const getFilesByCollection = async (
 
     const workspaceId = collection.workspaceId;
 
+    // Check watermark configuration and fetch accordingly
+    if (collection.watermarkConfig?.previewMode !== "none") {
+      const files = await WatermarkedFile.find({
+        collectionId: collection._id,
+        workspaceId,
+      });
+
+      if (!files.length) {
+        return next(
+          createError(
+            404,
+            "No watermarked files found for this collection in the specified workspace."
+          )
+        );
+      }
+
+      return res.status(200).json(files);
+    }
+
+    // Default case: return original files when watermark is "none"
     const files = await File.find({ workspaceId, collectionSlug: slug });
 
     if (!files.length) {
@@ -105,6 +127,41 @@ export const getFilesByCollection = async (
         createError(
           404,
           "No files found for this collection in the specified workspace."
+        )
+      );
+    }
+
+    res.status(200).json(files);
+  } catch (err) {
+    next(err);
+  }
+};
+
+// Endpoint 2: Always fetch from the original File model only
+export const getOriginalFilesByCollection = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const { slug } = req.params;
+
+  try {
+    const collection = await Collection.findOne({ slug });
+
+    if (!collection) {
+      return next(createError(404, "Collection not found."));
+    }
+
+    const workspaceId = collection.workspaceId;
+
+    // Always fetch from the original File model
+    const files = await File.find({ workspaceId, collectionSlug: slug });
+
+    if (!files.length) {
+      return next(
+        createError(
+          404,
+          "No original files found for this collection in the specified workspace."
         )
       );
     }

@@ -1,51 +1,57 @@
-# Use Node.js 18 LTS as base image
-FROM node:18-alpine AS builder
+# Use Node.js 18 LTS as base image (better compatibility with your dependencies)
+FROM node:18-alpine
 
 # Set working directory
 WORKDIR /app
 
-# Copy package files
+# Install system dependencies needed for Sharp, Canvas, and native modules
+RUN apk add --no-cache \
+    vips-dev \
+    libc6-compat \
+    python3 \
+    make \
+    g++ \
+    cairo-dev \
+    jpeg-dev \
+    pango-dev \
+    giflib-dev \
+    pixman-dev \
+    pangomm-dev \
+    libjpeg-turbo-dev \
+    freetype-dev \
+    fontconfig \
+    ttf-dejavu \
+    ttf-liberation \
+    ttf-opensans
+
+# Copy package files first for better Docker layer caching
 COPY package*.json ./
 
-# Install all dependencies (including devDependencies for building)
+# Install ALL dependencies (including dev dependencies for TypeScript compilation)
 RUN npm ci
 
-# Copy source code and TypeScript config
-COPY src/ ./src/
+# Copy TypeScript configuration
 COPY tsconfig.json ./
 
-# Build the TypeScript application
+# Copy source code
+COPY src/ ./src/
+
+# Build the TypeScript project
 RUN npm run build
 
-# Production stage
-FROM node:18-alpine AS production
+# Remove dev dependencies and source files to reduce image size
+RUN npm prune --production && \
+    rm -rf src/ tsconfig.json node_modules/.cache
 
-# Set working directory
-WORKDIR /app
+# Create logs directory
+RUN mkdir -p logs
 
-# Copy package files
-COPY package*.json ./
-
-# Install only production dependencies
-RUN npm ci --only=production && npm cache clean --force
-
-# Copy built application from builder stage
-COPY --from=builder /app/dist ./dist
-
-# Create non-root user for security
-RUN addgroup -g 1001 -S nodejs
-RUN adduser -S nodejs -u 1001
-
-# Change ownership of the app directory
-RUN chown -R nodejs:nodejs /app
-USER nodejs
-
-# Expose the port (adjust if your PORT env var uses a different default)
+# Expose the port
 EXPOSE 3000
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD node -e "require('http').get('http://localhost:' + (process.env.PORT || 3000) + '/', (res) => { process.exit(res.statusCode === 200 ? 0 : 1) })"
+  CMD node -e "require('http').get('http://localhost:3000/health', (res) => { process.exit(res.statusCode === 200 ? 0 : 1) })"
 
 # Start the application
 CMD ["npm", "start"]
