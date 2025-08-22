@@ -302,6 +302,15 @@ export const updateWatermarkConfig = async (
 
     collection.setWatermarkConfig(completeConfig);
 
+    // Push task to Redis queue
+    const queueData = {
+      collectionId,
+      slug: collection.slug,
+      watermarkConfig: completeConfig,
+    };
+
+    await redis.lpush("watermark-processing", JSON.stringify(queueData));
+
     // Set initial queued progress
     collection.setWatermarkProgress({
       total: 0,
@@ -312,15 +321,6 @@ export const updateWatermarkConfig = async (
     });
 
     await collection.save();
-
-    // Push task to Redis queue
-    const queueData = {
-      collectionId,
-      slug: collection.slug,
-      watermarkConfig: completeConfig,
-    };
-
-    await redis.lpush("watermark-processing", JSON.stringify(queueData));
 
     // Get queue position
     const queuePosition = await getQueuePosition(collectionId);
