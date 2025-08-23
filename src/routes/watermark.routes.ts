@@ -29,7 +29,7 @@ router.get(
 
 router.get("/:collectionId/watermark-progress", getCollectionWatermarkProgress);
 
-router.get("/cancel-watermark:collectionId/", verifyToken, cancelWatermarkJob);
+router.get("/cancel-watermark/:collectionId", verifyToken, cancelWatermarkJob);
 
 router.get(
   "/:collectionId/check-and-remove-queue",
