@@ -43,7 +43,7 @@ export const cancelWatermarkJob = async (
     // Update status to idle
     collection.setWatermarkProgress({
       ...progress,
-      status: "idle",
+      status: "failed",
       queuedAt: undefined,
       locked: false,
     });
