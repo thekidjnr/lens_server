@@ -1,6 +1,7 @@
 import sharp from "sharp";
 import { createCanvas, registerFont } from "canvas";
-import { WatermarkConfig } from "../../models/collection.model";
+import { WatermarkConfig } from "../../types";
+
 
 interface ProcessImageOptions {
   inputBuffer: Buffer;
