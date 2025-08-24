@@ -1,9 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import {
-  Collection,
-  WatermarkConfig,
-  WatermarkProgressResponse,
-} from "../models/collection.model";
+import { Collection } from "../models/collection.model";
 import { createError } from "../utils/common/error";
 import { Workspace } from "../models/workspace.model";
 import { deleteFileFromS3 } from "./s3.controller";
@@ -18,6 +14,7 @@ import {
   getQueuePosition,
   removeFromQueue,
 } from "../utils/watermark/watermark.handler";
+import { WatermarkConfig, WatermarkProgressResponse } from "../types";
 
 export const cancelWatermarkJob = async (
   req: Request,
@@ -304,12 +301,15 @@ export const updateWatermarkConfig = async (
 
     // Push task to Redis queue
     const queueData = {
-      collectionId,
+      collectionId: collection._id,
       slug: collection.slug,
       watermarkConfig: completeConfig,
     };
 
     await redis.lpush("watermark-processing", JSON.stringify(queueData));
+
+    // Get queue position
+    const queuePosition = await getQueuePosition(collectionId);
 
     // Set initial queued progress
     collection.setWatermarkProgress({
@@ -319,11 +319,6 @@ export const updateWatermarkConfig = async (
       queuedAt: undefined,
       locked: false,
     });
-
-    await collection.save();
-
-    // Get queue position
-    const queuePosition = await getQueuePosition(collectionId);
 
     if (queuePosition) {
       collection.lockWatermarkProgress();
