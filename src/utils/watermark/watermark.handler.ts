@@ -1,22 +1,5 @@
-import { Request, Response, NextFunction } from "express";
-import {
-  Collection,
-  WatermarkConfig,
-  WatermarkProgressResponse,
-} from "../../models/collection.model";
-import { createError } from "../common/error";
-import { Workspace } from "../../models/workspace.model";
-import slugify from "slugify";
-
-import { File } from "../../models/file.model";
-import { S3Client } from "@aws-sdk/client-s3";
-import { allowedMimeTypes, uploadToS3 } from "../common/s3";
-import path from "path";
-
 import { redis } from "../common/queue";
 import logger from "../common/logger";
-import { WatermarkedFile } from "../../models/watermarkedfile.model";
-
 
 export const MAX_FILE_SIZE = 5 * 1024 * 1024;
 
