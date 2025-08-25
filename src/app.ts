@@ -3,7 +3,6 @@ import express, { Express, ErrorRequestHandler } from "express";
 import cors, { CorsOptions } from "cors";
 import { createServer } from "http";
 import dotenv from "dotenv";
-// import "./utils/watermark.worker";
 import mongoose from "mongoose";
 import cookieParser from "cookie-parser";
 dotenv.config();
@@ -17,7 +16,7 @@ import workspaceRoute from "./routes/workspace.routes";
 import s3Route from "./routes/s3.routes";
 import logger from "./utils/common/logger";
 
-// import "./workers/batch.watermark.worker";
+import "./workers/batch.watermark.worker";
 
 const app: Express = express();
 const httpServer = createServer(app);
