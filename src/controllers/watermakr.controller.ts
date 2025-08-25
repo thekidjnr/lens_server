@@ -299,31 +299,52 @@ export const updateWatermarkConfig = async (
 
     collection.setWatermarkConfig(completeConfig);
 
-    // Push task to Redis queue
-    const queueData = {
-      collectionId: collection._id,
-      slug: collection.slug,
-      watermarkConfig: completeConfig,
-    };
-
-    await redis.lpush("watermark-processing", JSON.stringify(queueData));
-
-    // Get queue position
-    const queuePosition = await getQueuePosition(collectionId);
-
-    // Set initial queued progress
+    // Set initial queued progress and lock
     collection.setWatermarkProgress({
       total: 0,
       watermarked: 0,
       status: "queued",
-      queuedAt: undefined,
-      locked: false,
+      queuedAt: new Date(), // Set proper timestamp
+      locked: true, // Lock to prevent concurrent processing
     });
 
-    if (queuePosition) {
-      collection.lockWatermarkProgress();
+    // Save the collection to persist the status
+    await collection.save();
+
+    // Push task to Redis queue
+    const queueData = {
+      collectionId: collection._id as string, 
+      slug: collection.slug,
+      watermarkConfig: completeConfig,
+    };
+
+    try {
+      await redis.lpush("watermark-processing", JSON.stringify(queueData));
+    } catch (error) {
+      // If Redis push fails, reset the status to avoid inconsistency
+      logger.error(
+        `Failed to push job to Redis for collection ${collectionId}:`,
+        error
+      );
+      collection.setWatermarkProgress({
+        total: 0,
+        watermarked: 0,
+        status: "failed",
+        queuedAt: undefined,
+        locked: false,
+      });
       await collection.save();
+      return next(createError(500, "Failed to queue watermark job"));
     }
+
+    // Get queue position
+    const queuePosition = (await getQueuePosition(collectionId)) || 0; // Default to 0 if undefined
+
+    logger.info(
+      `Collection ${collectionId} added to watermark queue at position ${queuePosition}. WatermarkProgress: ${JSON.stringify(
+        collection.watermarkProgress
+      )}`
+    );
 
     logger.info(
       `Collection ${collectionId} added to watermark queue at position ${queuePosition}`

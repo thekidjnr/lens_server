@@ -17,6 +17,8 @@ import workspaceRoute from "./routes/workspace.routes";
 import s3Route from "./routes/s3.routes";
 import logger from "./utils/common/logger";
 
+// import "./workers/batch.watermark.worker";
+
 const app: Express = express();
 const httpServer = createServer(app);
 
